@@ -1,16 +1,14 @@
 # scripts/code_book_item.gd
 # ----------------------------------------------------------------------
-# 图鉴里的一张卡：图标 + 名字 + 数值（已发现时）
+# 图鉴里的一张卡：图标 + 名字 + 数值 + 能力描述
 # 未发现时显示"?"和灰色遮罩
 # ----------------------------------------------------------------------
 extends PanelContainer
 
-const DISCOVERED_BG := Color(0.18, 0.16, 0.22, 0.9)
-const LOCKED_BG := Color(0.12, 0.10, 0.12, 0.9)
-
 @onready var icon: TextureRect = $HBox/Icon
 @onready var name_label: Label = $HBox/VBox/Name
 @onready var stats_label: Label = $HBox/VBox/Stats
+@onready var desc_label: Label = $HBox/VBox/Desc
 @onready var status_label: Label = $HBox/Status
 
 var _discovered: bool = false
@@ -39,25 +37,28 @@ func _apply(kind: String, id: String, data: Dictionary, discovered: bool) -> voi
         # 状态：已发现
         status_label.text = "✓"
         status_label.modulate = Color(0.4, 1.0, 0.4, 1)
-        # 名字 + 数值
+        # 名字 + 数值 + 描述
         name_label.text = data.display_name
         stats_label.text = _format_stats(kind, data)
+        desc_label.text = data.get("description", "")
         name_label.modulate = Color.WHITE
         stats_label.modulate = Color(0.85, 0.85, 0.85, 1)
+        desc_label.modulate = Color(0.95, 0.85, 0.55, 1)
         modulate = Color.WHITE
     else:
         # 锁住
         icon.texture = null
         name_label.text = "???"
         stats_label.text = "尚未发现"
+        desc_label.text = "在游戏中使用或遇到即可解锁"
         status_label.text = "🔒"
         status_label.modulate = Color(0.5, 0.5, 0.5, 0.6)
         name_label.modulate = Color(0.6, 0.6, 0.6, 1)
         stats_label.modulate = Color(0.4, 0.4, 0.4, 1)
+        desc_label.modulate = Color(0.45, 0.45, 0.45, 1)
         modulate = Color(0.6, 0.6, 0.6, 1)
 
 func _get_zombie_icon_path(id: String) -> String:
-    # PlantDB 里僵尸没有 icon_path，我们用 scene 的同名 svg
     return "res://assets/zombies/%s.svg" % id
 
 func _format_stats(kind: String, data: Dictionary) -> String:

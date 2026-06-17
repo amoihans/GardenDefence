@@ -82,7 +82,7 @@ func _render_zombies() -> void:
 func _add_item(kind: String, id: String, data: Dictionary, discovered: bool) -> void:
     var item: Control = CodeBookItemScene.instantiate()
     grid.add_child(item)
-    item.custom_minimum_size = Vector2(280, 130)
+    item.custom_minimum_size = Vector2(280, 180)
     item.setup(kind, id, data, discovered)
 
 func _on_back() -> void:

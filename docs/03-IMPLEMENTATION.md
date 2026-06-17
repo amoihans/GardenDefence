@@ -7,39 +7,39 @@
 ## 1. 总体架构（一张图看懂）
 
 ```
-                ┌──────────────────────────────────┐
-                │  AutoLoad 单例（全局，永远存在）  │
-                ├──────────────────────────────────┤
-                │  GameState   阳光、波次、胜负     │
-                │  PlantDB     所有植物/僵尸/波次    │
-                │              配置 + 网格常量      │
-                └──────────────┬───────────────────┘
-                               │ 任何脚本都能直接访问
-                               ▼
+				┌──────────────────────────────────┐
+				│  AutoLoad 单例（全局，永远存在）  │
+				├──────────────────────────────────┤
+				│  GameState   阳光、波次、胜负     │
+				│  PlantDB     所有植物/僵尸/波次    │
+				│              配置 + 网格常量      │
+				└──────────────┬───────────────────┘
+							   │ 任何脚本都能直接访问
+							   ▼
    ┌──────────┐   change_scene   ┌───────────────────────────────┐
    │ MainMenu │ ───────────────▶│            Game               │
    │  开始 退  │                  │  ┌──────────────────────────┐ │
    └──────────┘                  │  │     Lawn (5x9 网格)       │ │
-                                 │  │  - 棋盘背景               │ │
-                                 │  │  - 鼠标悬停高亮            │ │
-                                 │  │  - plant_requested 信号   │ │
-                                 │  └────────────┬─────────────┘ │
-                                 │               │ 信号           │
-                                 │               ▼                │
-                                 │  Game.gd 接到信号 → spend 阳光 │
-                                 │  → instantiate 植物 → add_child│
-                                 │                                │
-                                 │  WaveManager 按 PlantDB.WAVES  │
-                                 │    定时 spawn Zombie           │
-                                 │                                │
-                                 │  Plant ──fire──▶ Pea ──hit──▶ │
-                                 │                       Zombie   │
-                                 │  Sunflower ──spawn──▶ Sun      │
-                                 │  Sky timer ──spawn──▶ Sun      │
-                                 │                                │
-                                 │  HUD (CanvasLayer)             │
-                                 │   显示阳光、卡片、波次、暂停    │
-                                 └────────────────────────────────┘
+								 │  │  - 棋盘背景               │ │
+								 │  │  - 鼠标悬停高亮            │ │
+								 │  │  - plant_requested 信号   │ │
+								 │  └────────────┬─────────────┘ │
+								 │               │ 信号           │
+								 │               ▼                │
+								 │  Game.gd 接到信号 → spend 阳光 │
+								 │  → instantiate 植物 → add_child│
+								 │                                │
+								 │  WaveManager 按 PlantDB.WAVES  │
+								 │    定时 spawn Zombie           │
+								 │                                │
+								 │  Plant ──fire──▶ Pea ──hit──▶ │
+								 │                       Zombie   │
+								 │  Sunflower ──spawn──▶ Sun      │
+								 │  Sky timer ──spawn──▶ Sun      │
+								 │                                │
+								 │  HUD (CanvasLayer)             │
+								 │   显示阳光、卡片、波次、暂停    │
+								 └────────────────────────────────┘
 ```
 
 关键设计原则：
@@ -166,8 +166,8 @@ wave_manager.start()                                 # 启动波次
 var sun_amount: int = 50 : set = _set_sun
 
 func _set_sun(value: int) -> void:
-    sun_amount = max(0, value)
-    sun_changed.emit(sun_amount)
+	sun_amount = max(0, value)
+	sun_changed.emit(sun_amount)
 ```
 
 GDScript 支持 setter 语法 `var x: T : set = func_name`。任何 `sun_amount += 25` 都会走 setter，HUD 自动刷新——这意味着调用方不需要关心"我得记得通知 UI"。
@@ -178,8 +178,8 @@ GDScript 支持 setter 语法 `var x: T : set = func_name`。任何 `sun_amount 
 
 ```gdscript
 const PLANTS: Dictionary = {
-    "sunflower": {"cost": 50, "max_hp": 60, "scene_path": "..."},
-    ...
+	"sunflower": {"cost": 50, "max_hp": 60, "scene_path": "..."},
+	...
 }
 ```
 
@@ -208,12 +208,12 @@ static func row_to_y(row) -> float               # 行号 → y 中线
 ```gdscript
 # 基类：
 func _ready() -> void:
-    current_hp = max_hp
-    add_to_group("plants")
-    _on_ready_setup()      # ★ 钩子
+	current_hp = max_hp
+	add_to_group("plants")
+	_on_ready_setup()      # ★ 钩子
 
 func _on_ready_setup() -> void:    # ★ 子类填空
-    pass
+	pass
 ```
 
 这是经典的 **Template Method 模式**，子类不需要 `super._ready()` 这种容易忘的事情。
@@ -222,11 +222,11 @@ func _on_ready_setup() -> void:    # ★ 子类填空
 
 ```gdscript
 func _has_zombie_in_row() -> bool:
-    for z in get_tree().get_nodes_in_group("zombies"):
-        if z is Zombie and z.row == row \
-                and z.global_position.x > global_position.x - 16:
-            return true
-    return false
+	for z in get_tree().get_nodes_in_group("zombies"):
+		if z is Zombie and z.row == row \
+				and z.global_position.x > global_position.x - 16:
+			return true
+	return false
 ```
 
 不用射线、不用碰撞——遍历 + 简单条件就够了。**100 个僵尸 × 5 个射手 = 500 次/帧的遍历**，对现代 CPU 是空气，简单可靠。
@@ -235,11 +235,11 @@ func _has_zombie_in_row() -> bool:
 
 ```gdscript
 func _physics_process(delta: float) -> void:
-    var target := _find_plant_to_eat()
-    if target != null:
-        _eat(target, delta)
-    else:
-        global_position.x -= speed * delta
+	var target := _find_plant_to_eat()
+	if target != null:
+		_eat(target, delta)
+	else:
+		global_position.x -= speed * delta
 ```
 
 为什么用 `_physics_process` 而不是 `_process`？
@@ -252,12 +252,12 @@ func _physics_process(delta: float) -> void:
 
 ```gdscript
 func _process(_delta) -> void:
-    if GameState.selected_plant_id == "":
-        _hide_hover(); return
-    var cell := PlantDB.world_to_cell(get_global_mouse_position())
-    if cell.x < 0: _hide_hover(); return
-    _hover_rect.position = (LAWN_ORIGIN + cell * CELL_SIZE)
-    _hover_rect.color = green_or_red_based_on_occupancy
+	if GameState.selected_plant_id == "":
+		_hide_hover(); return
+	var cell := PlantDB.world_to_cell(get_global_mouse_position())
+	if cell.x < 0: _hide_hover(); return
+	_hover_rect.position = (LAWN_ORIGIN + cell * CELL_SIZE)
+	_hover_rect.color = green_or_red_based_on_occupancy
 ```
 
 `plants` 是一个二维数组（9×5），存放 `Plant 实例 / null`。这是**最直接的 grid 数据结构**——查询 O(1)，遍历方便。
@@ -265,8 +265,8 @@ func _process(_delta) -> void:
 植物死了怎么清这个矩阵？
 ```gdscript
 func register_plant(col, row, plant):
-    plants[col][row] = plant
-    plant.died.connect(_on_plant_died.bind(col, row))   # ★ bind 闭包
+	plants[col][row] = plant
+	plant.died.connect(_on_plant_died.bind(col, row))   # ★ bind 闭包
 ```
 
 `Callable.bind()` 把 `col, row` 提前塞进信号回调的参数列表。植物自己 emit 时不需要知道自己的位置。
@@ -295,12 +295,12 @@ cooldown_overlay.size     = Vector2(size.x, h)
 
 ```gdscript
 for wi in total:
-    GameState.advance_wave(total)
-    for zombie_id in wave.spawns:
-        _spawn_zombie(zombie_id)
-        await get_tree().create_timer(interval).timeout
-    if wi < total - 1:
-        await get_tree().create_timer(wave.rest).timeout
+	GameState.advance_wave(total)
+	for zombie_id in wave.spawns:
+		_spawn_zombie(zombie_id)
+		await get_tree().create_timer(interval).timeout
+	if wi < total - 1:
+		await get_tree().create_timer(wave.rest).timeout
 ```
 
 `await` 是 GDScript 的协程：暂停函数到信号触发再继续，不阻塞主线程。
@@ -310,22 +310,22 @@ for wi in total:
 
 ```gdscript
 while not GameState.is_game_over:
-    await get_tree().create_timer(0.5).timeout
-    if get_tree().get_nodes_in_group("zombies").is_empty():
-        GameState.declare_win()
-        return
+	await get_tree().create_timer(0.5).timeout
+	if get_tree().get_nodes_in_group("zombies").is_empty():
+		GameState.declare_win()
+		return
 ```
 
 ### 4.9 `sun.gd` —— 同一脚本两种生成方式
 
 ```gdscript
 func skyfall(start_pos, ground_y):        # 天降：从空中落到地面
-    _is_falling = true
-    ...
+	_is_falling = true
+	...
 
 func ground_pop():                         # 向日葵：原地跳一下
-    var t := create_tween()
-    t.tween_property(...)
+	var t := create_tween()
+	t.tween_property(...)
 ```
 
 外部根据来源调不同接口，避免分两个类。
@@ -334,16 +334,16 @@ func ground_pop():                         # 向日葵：原地跳一下
 
 ```gdscript
 func _collect():
-    var t := create_tween()
-    t.set_parallel(true)
-    t.tween_property(self, "global_position", Vector2(60, 40), 0.4)
-    t.tween_property(self, "scale", Vector2(0.4, 0.4), 0.4)
-    t.tween_property(self, "modulate:a", 0.3, 0.4)
-    t.chain().tween_callback(_finish_collect)
+	var t := create_tween()
+	t.set_parallel(true)
+	t.tween_property(self, "global_position", Vector2(60, 40), 0.4)
+	t.tween_property(self, "scale", Vector2(0.4, 0.4), 0.4)
+	t.tween_property(self, "modulate:a", 0.3, 0.4)
+	t.chain().tween_callback(_finish_collect)
 
 func _finish_collect():
-    GameState.sun_amount += VALUE
-    queue_free()
+	GameState.sun_amount += VALUE
+	queue_free()
 ```
 
 `set_parallel(true)` 让位置、缩放、透明度三个 tween 同时进行；`chain()` 切回串行接 callback。
@@ -361,10 +361,10 @@ func _finish_collect():
    const ICEPEA = preload("res://scenes/projectiles/IcePea.tscn")
    var _t: Timer
    func _on_ready_setup():
-       _t = Timer.new(); _t.wait_time = 2.0; _t.autostart = true
-       add_child(_t); _t.timeout.connect(_fire)
+	   _t = Timer.new(); _t.wait_time = 2.0; _t.autostart = true
+	   add_child(_t); _t.timeout.connect(_fire)
    func _fire():
-       # 同 peashooter 思路，但子弹另一个场景，命中后 zombie.speed *= 0.5
+	   # 同 peashooter 思路，但子弹另一个场景，命中后 zombie.speed *= 0.5
    ```
 3. `IcePea.tscn` 复制 Pea.tscn，挂 ice_pea.gd（命中时给 zombie 加一个减速 Timer）
 4. `plant_db.gd`：
