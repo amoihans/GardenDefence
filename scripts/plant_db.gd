@@ -129,6 +129,7 @@ const ZOMBIES: Dictionary = {
         "damage_per_sec": 30.0,
         "description": "标准入门僵尸。所有属性（HP/速度/攻击）都是基线。",
         "scene_path": "res://scenes/zombies/BasicZombie.tscn",
+        "icon_path": "res://assets/zombies/basic_zombie.svg",
     },
     "conehead": {
         "display_name": "路障僵尸",
@@ -137,6 +138,7 @@ const ZOMBIES: Dictionary = {
         "damage_per_sec": 30.0,
         "description": "普通僵尸 + 180 HP 路障护盾。护盾破了 = 退回普通僵尸。",
         "scene_path": "res://scenes/zombies/ConeheadZombie.tscn",
+        "icon_path": "res://assets/zombies/conehead_zombie.svg",
     },
     "buckethead": {
         "display_name": "铁桶僵尸",
@@ -145,6 +147,7 @@ const ZOMBIES: Dictionary = {
         "damage_per_sec": 30.0,
         "description": "普通僵尸 + 500 HP 铁桶护盾。中期主力肉盾，需大量火力破盾。",
         "scene_path": "res://scenes/zombies/BucketheadZombie.tscn",
+        "icon_path": "res://assets/zombies/buckethead_zombie.svg",
     },
     "football": {
         "display_name": "橄榄球僵尸",
@@ -153,6 +156,7 @@ const ZOMBIES: Dictionary = {
         "damage_per_sec": 50.0,
         "description": "高血高速高伤。终日精英，常规射手需 3 倍火力才能在它到家前解决。",
         "scene_path": "res://scenes/zombies/FootballZombie.tscn",
+        "icon_path": "res://assets/zombies/football_zombie.svg",
     },
     "newspaper": {
         "display_name": "读报僵尸",
@@ -163,6 +167,7 @@ const ZOMBIES: Dictionary = {
         "damage_per_sec": 30.0,
         "description": "自带 300 HP 报纸护盾。护盾破后**速度提升 78%** 进入狂暴状态，要尽快处理。",
         "scene_path": "res://scenes/zombies/NewspaperZombie.tscn",
+        "icon_path": "res://assets/zombies/newspaper_zombie.svg",
     },
     "pole_vaulter": {
         "display_name": "撑杆僵尸",
@@ -171,6 +176,7 @@ const ZOMBIES: Dictionary = {
         "damage_per_sec": 30.0,
         "description": "第一次遇到植物时**撑杆跳过**（不再啃），只跳一次，后续正常战斗。需要预判放位。",
         "scene_path": "res://scenes/zombies/PoleVaulter.tscn",
+        "icon_path": "res://assets/zombies/pole_vaulter.svg",
     },
     "flag": {
         "display_name": "旗帜僵尸",
@@ -179,6 +185,7 @@ const ZOMBIES: Dictionary = {
         "damage_per_sec": 30.0,
         "description": "血薄但稍快。**纯视觉标记**，表示一波大波僵尸正在来袭（实际属性弱）。",
         "scene_path": "res://scenes/zombies/FlagZombie.tscn",
+        "icon_path": "res://assets/zombies/flag_zombie.svg",
     },
     "dancer": {
         "display_name": "舞王僵尸",
@@ -187,6 +194,7 @@ const ZOMBIES: Dictionary = {
         "damage_per_sec": 30.0,
         "description": "每 10 秒召唤 1 只 basic 伴舞（最多 4 次）。先杀舞王，伴舞一起清。",
         "scene_path": "res://scenes/zombies/DancerZombie.tscn",
+        "icon_path": "res://assets/zombies/dancer_zombie.svg",
     },
     "imp": {
         "display_name": "小鬼僵尸",
@@ -195,6 +203,7 @@ const ZOMBIES: Dictionary = {
         "damage_per_sec": 0.0,
         "description": "高速飞行 32。碰到植物立刻**自爆**（1200 伤害）。必须前置坚果墙或立刻击落。",
         "scene_path": "res://scenes/zombies/ImpZombie.tscn",
+        "icon_path": "res://assets/zombies/imp_zombie.svg",
     },
 }
 

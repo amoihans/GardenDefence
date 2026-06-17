@@ -30,8 +30,8 @@ func _ready() -> void:
 
 func _apply(kind: String, id: String, data: Dictionary, discovered: bool) -> void:
     if discovered:
-        # 显示图标
-        var path: String = data.icon_path if kind == "plant" else _get_zombie_icon_path(id)
+        # 显示图标（plant 和 zombie 都在 data.icon_path 里）
+        var path: String = data.get("icon_path", "")
         if ResourceLoader.exists(path):
             icon.texture = load(path)
         # 状态：已发现
@@ -57,9 +57,6 @@ func _apply(kind: String, id: String, data: Dictionary, discovered: bool) -> voi
         stats_label.modulate = Color(0.4, 0.4, 0.4, 1)
         desc_label.modulate = Color(0.45, 0.45, 0.45, 1)
         modulate = Color(0.6, 0.6, 0.6, 1)
-
-func _get_zombie_icon_path(id: String) -> String:
-    return "res://assets/zombies/%s.svg" % id
 
 func _format_stats(kind: String, data: Dictionary) -> String:
     if kind == "plant":
