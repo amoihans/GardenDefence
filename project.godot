@@ -27,6 +27,7 @@ PlantDB="*res://scripts/plant_db.gd"
 Sfx="*res://scripts/sfx.gd"
 Settings="*res://scripts/settings.gd"
 AchievementDB="*res://scripts/achievement_db.gd"
+CodeBookDB="*res://scripts/code_book_db.gd"
 ToastManager="*res://scripts/toast_manager.gd"
 
 [display]

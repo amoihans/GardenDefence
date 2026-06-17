@@ -1,8 +1,20 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/hud.gd" id="1_hud"]
 [ext_resource type="Texture2D" path="res://assets/ui/sun_icon.svg" id="2_hud"]
 [ext_resource type="Texture2D" path="res://assets/plants/shovel.svg" id="3_hud"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_shovel"]
+bg_color = Color(0.15, 0.10, 0.05, 0.85)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.85, 0.7, 0.4, 0.9)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_hud")
@@ -55,36 +67,44 @@ theme_override_font_sizes/font_size = 24
 [node name="CardRow" type="HBoxContainer" parent="Bar"]
 offset_left = 250.0
 offset_top = 0.0
-offset_right = 760.0
+offset_right = 1100.0
 offset_bottom = 96.0
 mouse_filter = 1
 theme_override_constants/separation = 6
 
-[node name="Shovel" type="TextureButton" parent="Bar"]
-offset_left = 780.0
-offset_top = 8.0
-offset_right = 852.0
-offset_bottom = 88.0
-texture_normal = ExtResource("3_hud")
-ignore_texture_size = true
-stretch_mode = 5
-
 [node name="WaveLabel" type="Label" parent="Bar"]
-offset_left = 900.0
+offset_left = 1110.0
 offset_top = 28.0
-offset_right = 1140.0
+offset_right = 1200.0
 offset_bottom = 68.0
 mouse_filter = 2
 text = "准备中"
 horizontal_alignment = 2
 vertical_alignment = 1
 theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 22
 
 [node name="PauseBtn" type="Button" parent="Bar"]
-offset_left = 1180.0
+offset_left = 1210.0
 offset_top = 20.0
 offset_right = 1268.0
 offset_bottom = 76.0
 text = "暂停"
 theme_override_font_sizes/font_size = 20
+
+[node name="ShovelBg" type="Panel" parent="."]
+offset_left = 1170.0
+offset_top = 610.0
+offset_right = 1278.0
+offset_bottom = 718.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_shovel")
+
+[node name="Shovel" type="TextureButton" parent="."]
+offset_left = 1180.0
+offset_top = 620.0
+offset_right = 1268.0
+offset_bottom = 708.0
+texture_normal = ExtResource("3_hud")
+ignore_texture_size = true
+stretch_mode = 5

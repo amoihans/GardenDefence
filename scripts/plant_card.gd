@@ -44,7 +44,7 @@ func _ready() -> void:
     icon.texture = load(data.icon_path)
     select_border.visible = false
     cooldown_overlay.size = Vector2(0, 0)
-    custom_minimum_size = Vector2(80, 96)
+    custom_minimum_size = Vector2(72, 96)
     GameState.sun_changed.connect(_refresh_affordable)
     GameState.selected_plant_changed.connect(_refresh_selected)
     gui_input.connect(_on_gui_input)

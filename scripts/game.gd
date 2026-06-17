@@ -95,8 +95,9 @@ func _place_plant(col: int, row: int, plant_id: String) -> void:
     # 记录"最后一个种下的植物"，作为肥料目标
     _last_plant = plant
     plant.died.connect(_on_last_plant_died.bind(plant))
-    # 成就
+    # 成就 + 图鉴
     AchievementDB.on_plant_planted(plant_id)
+    CodeBookDB.on_plant_planted(plant_id)
 
 func _on_last_plant_died(plant: Plant) -> void:
     if _last_plant == plant:

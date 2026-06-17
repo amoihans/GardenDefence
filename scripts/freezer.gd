@@ -18,7 +18,8 @@ func _on_ready_setup() -> void:
 	_fire_timer.timeout.connect(_try_fire)
 
 # 覆盖父类的 _shoot_pea：换子弹场景
-func _shoot_pea() -> void:
+# 注意：必须保留 row_offset 参数与父类签名一致
+func _shoot_pea(row_offset: int = 0) -> void:
 	var pea: Node2D = ICE_PEA_SCENE.instantiate()
 	var game := get_tree().get_first_node_in_group("game_root")
 	if game:
@@ -27,7 +28,7 @@ func _shoot_pea() -> void:
 		get_parent().add_child(pea)
 	pea.global_position = global_position + Vector2(20, -10)
 	if pea.has_method("setup"):
-		pea.setup(row, pea_damage)
+		pea.setup(row + row_offset, pea_damage)
 	Sfx.play_shoot_ice()
 	var t := create_tween()
 	t.tween_property(sprite, "position", Vector2(-3, 0), 0.05)
