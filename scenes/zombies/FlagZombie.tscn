@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/flag_zombie.gd" id="1_fgz"]
+[ext_resource type="Texture2D" path="res://assets/zombies/flag_zombie.svg" id="2_fgz"]
+
+[node name="FlagZombie" type="Node2D"]
+script = ExtResource("1_fgz")
+max_hp = 70.0
+base_speed = 22.0
+damage_per_sec = 30.0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_fgz")

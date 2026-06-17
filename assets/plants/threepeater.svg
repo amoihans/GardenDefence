@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96">
+  <!-- pot -->
+  <ellipse cx="48" cy="82" rx="22" ry="6" fill="#5d4037"/>
+  <rect x="28" y="72" width="40" height="12" fill="#795548" rx="2"/>
+  <!-- 3 stems indicating firing directions -->
+  <rect x="44" y="38" width="8" height="38" fill="#1b5e20"/>
+  <path d="M 48 40 Q 30 50 22 60" stroke="#1b5e20" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M 48 40 Q 66 50 74 60" stroke="#1b5e20" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <!-- leaves -->
+  <ellipse cx="32" cy="58" rx="9" ry="4" fill="#33691e" transform="rotate(-25 32 58)"/>
+  <ellipse cx="64" cy="58" rx="9" ry="4" fill="#33691e" transform="rotate(25 64 58)"/>
+
+  <!-- 3 heads with distinct tints: center is bright, sides are slightly darker -->
+  <!-- left head (shoots up-left) -->
+  <ellipse cx="22" cy="60" rx="13" ry="11" fill="#558b2f"/>
+  <ellipse cx="22" cy="62" rx="9" ry="7" fill="#7cb342"/>
+  <rect x="32" y="56" width="11" height="8" rx="2" fill="#33691e" transform="rotate(20 32 60)"/>
+  <circle cx="18" cy="58" r="2.5" fill="#fff"/>
+  <circle cx="19" cy="59" r="1.2" fill="#000"/>
+
+  <!-- center head (shoots straight right) — main one, brightest -->
+  <ellipse cx="48" cy="30" rx="16" ry="14" fill="#9ccc65"/>
+  <ellipse cx="48" cy="32" rx="11" ry="9" fill="#c5e1a5"/>
+  <rect x="60" y="26" width="12" height="9" rx="2" fill="#558b2f"/>
+  <circle cx="72" cy="30" r="4" fill="#33691e"/>
+  <circle cx="73" cy="30" r="2" fill="#000"/>
+  <circle cx="42" cy="26" r="3" fill="#fff"/>
+  <circle cx="43" cy="27" r="1.5" fill="#000"/>
+  <!-- glow halo on center head -->
+  <circle cx="48" cy="30" r="20" fill="none" stroke="#a5d6a7" stroke-width="1" opacity="0.4"/>
+
+  <!-- right head (shoots down-right) -->
+  <ellipse cx="74" cy="60" rx="13" ry="11" fill="#558b2f"/>
+  <ellipse cx="74" cy="62" rx="9" ry="7" fill="#7cb342"/>
+  <rect x="86" y="56" width="11" height="8" rx="2" fill="#33691e" transform="rotate(-20 86 60)"/>
+  <circle cx="78" cy="58" r="2.5" fill="#fff"/>
+  <circle cx="79" cy="59" r="1.2" fill="#000"/>
+</svg>

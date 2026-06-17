@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ice_pea.gd" id="1_ip"]
+[ext_resource type="Texture2D" path="res://assets/projectiles/ice_pea.svg" id="2_ip"]
+
+[node name="IcePea" type="Node2D"]
+script = ExtResource("1_ip")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_ip")

@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/potato_mine.gd" id="1_pm"]
+[ext_resource type="Texture2D" path="res://assets/plants/potato_mine.svg" id="2_pm"]
+
+[node name="PotatoMine" type="Node2D"]
+script = ExtResource("1_pm")
+plant_id = "potato_mine"
+max_hp = 60
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_pm")

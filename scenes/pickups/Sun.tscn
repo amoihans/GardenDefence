@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/sun.gd" id="1_sun"]
+[ext_resource type="Texture2D" path="res://assets/pickups/sun.svg" id="2_sun"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_sun"]
+radius = 24.0
+
+[node name="Sun" type="Area2D"]
+input_pickable = true
+script = ExtResource("1_sun")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_sun")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_sun")

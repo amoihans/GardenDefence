@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <circle cx="12" cy="12" r="10" fill="#0277bd"/>
+  <circle cx="12" cy="12" r="8" fill="#4fc3f7"/>
+  <ellipse cx="9" cy="9" rx="3" ry="2" fill="#e1f5fe" opacity="0.8"/>
+  <!-- frost spikes -->
+  <g stroke="#e1f5fe" stroke-width="1" fill="none" stroke-linecap="round">
+    <line x1="12" y1="2" x2="12" y2="5"/>
+    <line x1="12" y1="19" x2="12" y2="22"/>
+    <line x1="2" y1="12" x2="5" y2="12"/>
+    <line x1="19" y1="12" x2="22" y2="12"/>
+  </g>
+</svg>

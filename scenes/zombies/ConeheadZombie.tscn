@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/zombie.gd" id="1_cz"]
+[ext_resource type="Texture2D" path="res://assets/zombies/conehead_zombie.svg" id="2_cz"]
+
+[node name="ConeheadZombie" type="Node2D"]
+script = ExtResource("1_cz")
+max_hp = 280.0
+base_speed = 20.0
+damage_per_sec = 30.0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_cz")

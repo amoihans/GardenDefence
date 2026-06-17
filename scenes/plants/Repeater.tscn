@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/peashooter.gd" id="1_rp"]
+[ext_resource type="Texture2D" path="res://assets/plants/repeater.svg" id="2_rp"]
+
+[node name="Repeater" type="Node2D"]
+script = ExtResource("1_rp")
+plant_id = "repeater"
+max_hp = 60
+fire_interval = 1.4
+pea_damage = 20.0
+burst_count = 2
+burst_gap = 0.18
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_rp")

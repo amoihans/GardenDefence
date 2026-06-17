@@ -1,0 +1,78 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/hud.gd" id="1_hud"]
+[ext_resource type="Texture2D" path="res://assets/ui/sun_icon.svg" id="2_hud"]
+[ext_resource type="Texture2D" path="res://assets/plants/shovel.svg" id="3_hud"]
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("1_hud")
+process_mode = 3
+
+[node name="Bar" type="Control" parent="."]
+offset_right = 1280.0
+offset_bottom = 96.0
+mouse_filter = 1
+
+[node name="Background" type="ColorRect" parent="Bar"]
+offset_right = 1280.0
+offset_bottom = 96.0
+mouse_filter = 2
+color = Color(0.15, 0.10, 0.05, 0.9)
+
+[node name="SunIcon" type="TextureRect" parent="Bar"]
+offset_left = 12.0
+offset_top = 24.0
+offset_right = 60.0
+offset_bottom = 72.0
+mouse_filter = 2
+texture = ExtResource("2_hud")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="SunCount" type="Label" parent="Bar"]
+offset_left = 64.0
+offset_top = 20.0
+offset_right = 180.0
+offset_bottom = 76.0
+mouse_filter = 2
+text = "50"
+vertical_alignment = 1
+theme_override_colors/font_color = Color(1, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 36
+
+[node name="CardRow" type="HBoxContainer" parent="Bar"]
+offset_left = 200.0
+offset_top = 0.0
+offset_right = 760.0
+offset_bottom = 96.0
+mouse_filter = 1
+theme_override_constants/separation = 6
+
+[node name="Shovel" type="TextureButton" parent="Bar"]
+offset_left = 780.0
+offset_top = 8.0
+offset_right = 852.0
+offset_bottom = 88.0
+texture_normal = ExtResource("3_hud")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="WaveLabel" type="Label" parent="Bar"]
+offset_left = 900.0
+offset_top = 28.0
+offset_right = 1140.0
+offset_bottom = 68.0
+mouse_filter = 2
+text = "准备中"
+horizontal_alignment = 2
+vertical_alignment = 1
+theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 1)
+theme_override_font_sizes/font_size = 24
+
+[node name="PauseBtn" type="Button" parent="Bar"]
+offset_left = 1180.0
+offset_top = 20.0
+offset_right = 1268.0
+offset_bottom = 76.0
+text = "暂停"
+theme_override_font_sizes/font_size = 20

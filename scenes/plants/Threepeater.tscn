@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/peashooter.gd" id="1_3p"]
+[ext_resource type="Texture2D" path="res://assets/plants/threepeater.svg" id="2_3p"]
+
+[node name="Threepeater" type="Node2D"]
+script = ExtResource("1_3p")
+plant_id = "threepeater"
+max_hp = 80
+fire_interval = 1.4
+pea_damage = 20.0
+burst_count = 1
+row_offsets = Array[int]([-1, 0, 1])
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_3p")

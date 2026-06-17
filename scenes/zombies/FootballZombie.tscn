@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/football_zombie.gd" id="1_fz"]
+[ext_resource type="Texture2D" path="res://assets/zombies/football_zombie.svg" id="2_fz"]
+
+[node name="FootballZombie" type="Node2D"]
+script = ExtResource("1_fz")
+max_hp = 1000.0
+base_speed = 26.0
+damage_per_sec = 50.0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_fz")

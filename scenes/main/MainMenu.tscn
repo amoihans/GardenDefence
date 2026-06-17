@@ -1,0 +1,86 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_mm"]
+[ext_resource type="Texture2D" path="res://icon.svg" id="2_mm"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_mm")
+
+[node name="Background" type="ColorRect" parent="."]
+offset_right = 1280.0
+offset_bottom = 720.0
+color = Color(0.42, 0.62, 0.27, 1)
+
+[node name="Title" type="Label" parent="."]
+offset_left = 0.0
+offset_top = 110.0
+offset_right = 1280.0
+offset_bottom = 200.0
+text = "庭院保卫战"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_colors/font_color = Color(1, 1, 0.7, 1)
+theme_override_font_sizes/font_size = 64
+
+[node name="Subtitle" type="Label" parent="."]
+offset_left = 0.0
+offset_top = 200.0
+offset_right = 1280.0
+offset_bottom = 240.0
+text = "Garden Defense  ——  一份 Godot 4 学习项目"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 0.85)
+theme_override_font_sizes/font_size = 20
+
+[node name="Logo" type="TextureRect" parent="."]
+offset_left = 576.0
+offset_top = 260.0
+offset_right = 704.0
+offset_bottom = 388.0
+texture = ExtResource("2_mm")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Center" type="CenterContainer" parent="."]
+offset_top = 420.0
+offset_right = 1280.0
+offset_bottom = 680.0
+
+[node name="VBox" type="VBoxContainer" parent="Center"]
+theme_override_constants/separation = 16
+
+[node name="StartBtn" type="Button" parent="Center/VBox"]
+custom_minimum_size = Vector2(260, 60)
+text = "▶ 快速开始"
+theme_override_font_sizes/font_size = 26
+
+[node name="SelectBtn" type="Button" parent="Center/VBox"]
+custom_minimum_size = Vector2(260, 60)
+text = "📋 选关"
+theme_override_font_sizes/font_size = 24
+
+[node name="SettingsBtn" type="Button" parent="Center/VBox"]
+custom_minimum_size = Vector2(260, 60)
+text = "⚙ 设置"
+theme_override_font_sizes/font_size = 22
+
+[node name="QuitBtn" type="Button" parent="Center/VBox"]
+custom_minimum_size = Vector2(260, 60)
+text = "退出"
+theme_override_font_sizes/font_size = 22
+
+[node name="Hint" type="Label" parent="."]
+offset_left = 0.0
+offset_top = 690.0
+offset_right = 1280.0
+offset_bottom = 716.0
+text = "操作：左键收阳光 / 1-5 选植物 / 6 选铲子 / 拖拽卡片直接种下 / 右键或 Esc 取消 / Space 暂停"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_colors/font_color = Color(1, 1, 1, 0.7)
+theme_override_font_sizes/font_size = 14

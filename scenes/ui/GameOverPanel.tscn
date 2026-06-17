@@ -1,0 +1,65 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/game_over_panel.gd" id="1_gop"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
+bg_color = Color(0.13, 0.13, 0.17, 0.95)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 0.6)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[node name="GameOverPanel" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1_gop")
+process_mode = 3
+
+[node name="Backdrop" type="ColorRect" parent="."]
+offset_right = 1280.0
+offset_bottom = 720.0
+color = Color(0, 0, 0, 0.55)
+
+[node name="Card" type="Panel" parent="Backdrop"]
+offset_left = 440.0
+offset_top = 200.0
+offset_right = 840.0
+offset_bottom = 520.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="Title" type="Label" parent="Backdrop/Card"]
+offset_left = 0.0
+offset_top = 40.0
+offset_right = 400.0
+offset_bottom = 120.0
+text = "..."
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 40
+
+[node name="VBox" type="VBoxContainer" parent="Backdrop/Card"]
+offset_left = 100.0
+offset_top = 130.0
+offset_right = 300.0
+offset_bottom = 320.0
+theme_override_constants/separation = 16
+
+[node name="NextBtn" type="Button" parent="Backdrop/Card/VBox"]
+visible = false
+custom_minimum_size = Vector2(0, 50)
+text = "▶ 下一关"
+theme_override_font_sizes/font_size = 22
+
+[node name="RetryBtn" type="Button" parent="Backdrop/Card/VBox"]
+custom_minimum_size = Vector2(0, 50)
+text = "再来一次"
+theme_override_font_sizes/font_size = 22
+
+[node name="MenuBtn" type="Button" parent="Backdrop/Card/VBox"]
+custom_minimum_size = Vector2(0, 50)
+text = "回主菜单"
+theme_override_font_sizes/font_size = 22

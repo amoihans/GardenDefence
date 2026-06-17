@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/sunflower.gd" id="1_sf"]
+[ext_resource type="Texture2D" path="res://assets/plants/sunflower.svg" id="2_sf"]
+
+[node name="Sunflower" type="Node2D"]
+script = ExtResource("1_sf")
+plant_id = "sunflower"
+max_hp = 60
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_sf")

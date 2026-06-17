@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/newspaper_zombie.gd" id="1_nz"]
+[ext_resource type="Texture2D" path="res://assets/zombies/newspaper_zombie.svg" id="2_nz"]
+
+[node name="NewspaperZombie" type="Node2D"]
+script = ExtResource("1_nz")
+max_hp = 100.0
+shield_hp = 300.0
+speed_after_shield = 32.0
+base_speed = 18.0
+damage_per_sec = 30.0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_nz")

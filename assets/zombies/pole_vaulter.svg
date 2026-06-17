@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96">
+  <!-- legs (running pose) -->
+  <rect x="28" y="70" width="10" height="20" fill="#37474f" transform="rotate(-20 33 80)"/>
+  <rect x="54" y="70" width="10" height="20" fill="#37474f" transform="rotate(20 59 80)"/>
+  <rect x="26" y="86" width="14" height="4" fill="#212121"/>
+  <rect x="52" y="86" width="14" height="4" fill="#212121"/>
+  <!-- body -->
+  <rect x="26" y="40" width="36" height="32" fill="#c62828"/>
+  <!-- arms (one holding pole) -->
+  <rect x="14" y="42" width="12" height="8" fill="#a5d6a7"/>
+  <rect x="58" y="42" width="6" height="24" fill="#a5d6a7"/>
+  <rect x="60" y="64" width="4" height="4" fill="#81c784"/>
+  <!-- pole (long, diagonal) -->
+  <line x1="60" y1="0" x2="60" y2="70" stroke="#5d4037" stroke-width="3"/>
+  <line x1="60" y1="0" x2="60" y2="3" stroke="#ffeb3b" stroke-width="5"/>
+  <line x1="60" y1="67" x2="60" y2="70" stroke="#37474f" stroke-width="4"/>
+  <!-- head -->
+  <ellipse cx="42" cy="28" rx="18" ry="18" fill="#a5d6a7"/>
+  <ellipse cx="26" cy="28" rx="4" ry="6" fill="#81c784"/>
+  <ellipse cx="58" cy="28" rx="4" ry="6" fill="#81c784"/>
+  <!-- sports headband -->
+  <rect x="26" y="14" width="32" height="4" fill="#ffeb3b"/>
+  <!-- eyes (focused) -->
+  <circle cx="36" cy="26" r="3" fill="#fff"/>
+  <circle cx="48" cy="26" r="3" fill="#fff"/>
+  <circle cx="36" cy="27" r="1.5" fill="#d32f2f"/>
+  <circle cx="48" cy="27" r="1.5" fill="#d32f2f"/>
+  <path d="M 32 36 Q 42 42 52 36" stroke="#000" stroke-width="2" fill="#3e2723"/>
+  <!-- arm gripping pole -->
+  <rect x="58" y="36" width="8" height="8" fill="#a5d6a7"/>
+  <rect x="56" y="34" width="4" height="12" fill="#81c784"/>
+</svg>
