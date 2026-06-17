@@ -29,6 +29,7 @@ func _ready() -> void:
     _init_grid_data()
     _build_visual_grid()
     _build_hover_indicator()
+    _spawn_lawn_mowers()
     set_process(true)
     set_process_unhandled_input(true)
 
@@ -107,11 +108,11 @@ func _unhandled_input(event: InputEvent) -> void:
         get_viewport().set_input_as_handled()
 
 # 由 Game 实际种下植物后调用 -----------------------------------------
-func register_plant(col: int, row: int, plant: Plant) -> void:
+func register_plant(col: int, row: int, plant: Node) -> void:
     plants[col][row] = plant
     plant.died.connect(_on_plant_died.bind(col, row))
 
-func _on_plant_died(_p: Plant, col: int, row: int) -> void:
+func _on_plant_died(_p: Node, col: int, row: int) -> void:
     if col >= 0 and col < PlantDB.GRID_COLS and row >= 0 and row < PlantDB.GRID_ROWS:
         plants[col][row] = null
 
@@ -124,3 +125,22 @@ func remove_plant(col: int, row: int) -> void:
 
 func is_empty(col: int, row: int) -> bool:
     return plants[col][row] == null
+
+# 在每行最左侧放一个除草机（最后一道防线）
+const LawnMowerScene := preload("res://scenes/pickups/LawnMower.tscn")
+
+func _spawn_lawn_mowers() -> void:
+    for r in PlantDB.GRID_ROWS:
+        var m = LawnMowerScene.instantiate()
+        m.setup(r)
+        # x = 草坪最左 - 80 → 稍微露在草坪外但还在画面内
+        m.position = Vector2(PlantDB.LAWN_ORIGIN_X - 80, PlantDB.row_to_y(r))
+        add_child(m)
+
+# 外部调用：触发某行的除草机
+func trigger_lawn_mower(row: int) -> void:
+    for node in get_tree().get_nodes_in_group("lawn_mowers"):
+        var m = node as Node
+        if m == null: continue
+        if "row" in m and m.row == row:
+            m.trigger()

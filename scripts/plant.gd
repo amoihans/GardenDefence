@@ -16,7 +16,9 @@
 extends Node2D
 class_name Plant
 
-signal died(plant: Plant)
+const Particles := preload("res://scripts/particles.gd")
+
+signal died(plant)
 
 @export var plant_id: String = ""              # 在场景里手动填
 @export var max_hp: int = 60
@@ -34,61 +36,61 @@ const BOOST_DURATION := 5.0
 @onready var sprite: Sprite2D = $Sprite2D
 
 func _ready() -> void:
-    current_hp = max_hp
-    add_to_group("plants")
-    # 子类自己的逻辑放到 _on_ready_setup 里
-    _on_ready_setup()
+	current_hp = max_hp
+	add_to_group("plants")
+	# 子类自己的逻辑放到 _on_ready_setup 里
+	_on_ready_setup()
 
 # 子类可重写：在 _ready 末尾被调用，做自己的初始化
 func _on_ready_setup() -> void:
-    pass
+	pass
 
 # 受到伤害；子类一般不重写
 func take_damage(amount: float) -> void:
-    if contact_damage_immune:
-        return
-    current_hp -= amount
-    # 受击红闪
-    _flash_damage()
-    if current_hp <= 0:
-        die()
+	if contact_damage_immune:
+		return
+	current_hp -= amount
+	# 受击红闪
+	_flash_damage()
+	if current_hp <= 0:
+		die()
 
 func _flash_damage() -> void:
-    if sprite == null:
-        return
-    sprite.modulate = Color(1.5, 0.6, 0.6)
-    var t := create_tween()
-    t.tween_property(sprite, "modulate", Color.WHITE, 0.15)
+	if sprite == null:
+		return
+	sprite.modulate = Color(1.5, 0.6, 0.6)
+	var t := create_tween()
+	t.tween_property(sprite, "modulate", Color.WHITE, 0.15)
 
 # ---------- 肥料 ----------
 # 默认行为：5 秒内金色发光（攻击类 / 产出类子类可重写以做实际加速）
 func fertilize() -> void:
-    if _boost_active:
-        return
-    _boost_active = true
-    _apply_boost_visual(true)
-    var t := Timer.new()
-    t.one_shot = true
-    t.wait_time = BOOST_DURATION
-    add_child(t)
-    t.timeout.connect(_on_boost_finished)
-    t.start()
+	if _boost_active:
+		return
+	_boost_active = true
+	_apply_boost_visual(true)
+	var t := Timer.new()
+	t.one_shot = true
+	t.wait_time = BOOST_DURATION
+	add_child(t)
+	t.timeout.connect(_on_boost_finished)
+	t.start()
 
 # 默认 5 秒到期的清理；子类若修改了自身行为（如改了 fire_interval）应同时改回去
 func _on_boost_finished() -> void:
-    _boost_active = false
-    _apply_boost_visual(false)
+	_boost_active = false
+	_apply_boost_visual(false)
 
 func _apply_boost_visual(active: bool) -> void:
-    if sprite == null:
-        return
-    if active:
-        sprite.modulate = Color(1.6, 1.5, 0.6)
-    else:
-        sprite.modulate = Color.WHITE
+	if sprite == null:
+		return
+	if active:
+		sprite.modulate = Color(1.6, 1.5, 0.6)
+	else:
+		sprite.modulate = Color.WHITE
 
 func die() -> void:
-    died.emit(self)
-    # 飘叶子
-    Particles.leaves(self, global_position)
-    queue_free()
+	died.emit(self)
+	# 飘叶子
+	Particles.leaves(self, global_position)
+	queue_free()

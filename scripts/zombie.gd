@@ -17,7 +17,9 @@
 extends Node2D
 class_name Zombie
 
-signal died(zombie: Zombie)
+const Particles := preload("res://scripts/particles.gd")
+
+signal died(zombie)
 
 @export var max_hp: float = 100.0
 @export var base_speed: float = 20.0              # 基础速度（被减速/报纸打破时变更高）
@@ -32,7 +34,7 @@ var slow_timer: float = 0.0
 
 var current_hp: float = 100.0
 var row: int = 0
-var _attacking_target: Plant = null
+var _attacking_target: Node = null
 
 @onready var sprite: Sprite2D = $Sprite2D
 
@@ -64,14 +66,26 @@ func _physics_process(delta: float) -> void:
 	else:
 		_attacking_target = null
 		global_position.x -= current_speed * delta
-		# 越界判负
+		# 越界：先触发该行除草机
+		# 除草机只能挡一次：触发后该行僵尸应该被清掉；
+		# 如果除草机已经用过（_used=true），再越界就判负。
 		if global_position.x < PlantDB.LAWN_ORIGIN_X - 32:
-			GameState.declare_loss()
+			var mowers := get_tree().get_nodes_in_group("lawn_mowers")
+			var saved: bool = false
+			for m_node in mowers:
+				var m = m_node as Node
+				if m == null: continue
+				if "row" in m and m.row == row and not m._used:
+					m.trigger()
+					saved = true
+					break
+			if not saved:
+				GameState.declare_loss()
 			queue_free()
 
 # 找到同行、x 紧邻自己左边的植物
-func _find_plant_to_eat() -> Plant:
-	var best: Plant = null
+func _find_plant_to_eat() -> Node:
+	var best: Node = null
 	var best_x: float = -INF
 	for node in get_tree().get_nodes_in_group("plants"):
 		var p := node as Plant
@@ -84,7 +98,7 @@ func _find_plant_to_eat() -> Plant:
 				best_x = p.global_position.x
 	return best
 
-func _eat(target: Plant, delta: float) -> void:
+func _eat(target: Node, delta: float) -> void:
 	target.take_damage(damage_per_sec * delta)
 	var phase := sin(Time.get_ticks_msec() * 0.02) * 1.5
 	sprite.position.y = phase

@@ -57,7 +57,7 @@ static func _resolve_host(parent: Node) -> Node:
 # 内部：生成一个粒子
 static func _spawn_particle(host: Node, at: Vector2, color: Color,
 		speed: float, life: float, gravity: float,
-		size_min: float, size_max: float, spread_deg: float) -> Node2D:
+		size_min: float, size_max: float, spread_deg: float) -> CanvasItem:
 	var size := randf_range(size_min, size_max)
 	var p := ColorRect.new()
 	p.color = color
@@ -76,7 +76,7 @@ static func _spawn_particle(host: Node, at: Vector2, color: Color,
 	return p
 
 # 用 Timer 异步推进（不在 _process 里跑循环，零开销）
-static func _particle_process(p: Node2D, origin: Vector2, vel: Vector2, life: float, gravity: float, size: float) -> void:
+static func _particle_process(p: CanvasItem, origin: Vector2, vel: Vector2, life: float, gravity: float, size: float) -> void:
 	var t := 0.0
 	var dt := 0.02
 	var steps := int(life / dt)
