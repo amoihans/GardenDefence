@@ -1,0 +1,61 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/achievements_view.gd" id="1_av"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_av"]
+bg_color = Color(0.10, 0.13, 0.16, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.85, 0.3, 0.5)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="AchievementsView" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_av")
+
+[node name="Background" type="ColorRect" parent="."]
+offset_right = 1280.0
+offset_bottom = 720.0
+mouse_filter = 2
+color = Color(0.42, 0.62, 0.27, 1)
+
+[node name="TopBar" type="HBoxContainer" parent="."]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 1264.0
+offset_bottom = 72.0
+mouse_filter = 1
+theme_override_constants/separation = 16
+
+[node name="BackBtn" type="Button" parent="TopBar"]
+custom_minimum_size = Vector2(120, 50)
+text = "← 返回"
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_av")
+
+[node name="Title" type="Label" parent="TopBar"]
+size_flags_horizontal = 3
+mouse_filter = 2
+text = "成就"
+vertical_alignment = 1
+theme_override_colors/font_color = Color(1, 1, 0.7, 1)
+theme_override_font_sizes/font_size = 32
+
+[node name="Center" type="CenterContainer" parent="."]
+offset_top = 96.0
+offset_right = 1280.0
+offset_bottom = 700.0
+mouse_filter = 1
+
+[node name="List" type="VBoxContainer" parent="Center"]
+custom_minimum_size = Vector2(760, 0)
+mouse_filter = 1
+theme_override_constants/separation = 10

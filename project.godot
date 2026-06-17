@@ -26,6 +26,8 @@ GameState="*res://scripts/game_state.gd"
 PlantDB="*res://scripts/plant_db.gd"
 Sfx="*res://scripts/sfx.gd"
 Settings="*res://scripts/settings.gd"
+AchievementDB="*res://scripts/achievement_db.gd"
+ToastManager="*res://scripts/toast_manager.gd"
 
 [display]
 
@@ -81,6 +83,11 @@ slot_5={
 slot_6={
 "deadzone": 0.5,
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":true,"keycode":54,"physical_keycode":0,"key_label":0,"unicode":54,"location":0,"echo":false,"script":null)
+]
+}
+fertilize={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":true,"keycode":70,"physical_keycode":0,"key_label":0,"unicode":102,"location":0,"echo":false,"script":null)
 ]
 }
 

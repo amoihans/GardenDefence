@@ -8,6 +8,7 @@ class_name HUD
 const PlantCardScene := preload("res://scenes/ui/PlantCard.tscn")
 
 @onready var sun_label: Label = $Bar/SunCount
+@onready var fertilizer_label: Label = $Bar/FertilizerLabel
 @onready var wave_label: Label = $Bar/WaveLabel
 @onready var card_row: HBoxContainer = $Bar/CardRow
 @onready var shovel_button: TextureButton = $Bar/Shovel
@@ -25,8 +26,10 @@ var _level_name: String = ""
 func _ready() -> void:
     _build_cards()
     _refresh_sun(GameState.sun_amount)
+    _refresh_fertilizer(GameState.fertilizer)
     _refresh_wave(GameState.current_wave, GameState.total_waves)
     GameState.sun_changed.connect(_refresh_sun)
+    GameState.fertilizer_changed.connect(_refresh_fertilizer)
     GameState.wave_changed.connect(_refresh_wave)
     GameState.selected_plant_changed.connect(_on_selected_changed)
     shovel_button.pressed.connect(_on_shovel_pressed)
@@ -69,6 +72,10 @@ func _on_selected_changed(sel: String) -> void:
 
 func _refresh_sun(amount: int) -> void:
     sun_label.text = str(amount)
+
+func _refresh_fertilizer(amount: int) -> void:
+    fertilizer_label.text = "🌱×%d" % amount
+    fertilizer_label.modulate = Color(0.6, 1.0, 0.5, 1) if amount > 0 else Color(0.5, 0.5, 0.5, 0.6)
 
 func _refresh_wave(cur: int, total: int) -> void:
     if total <= 0:

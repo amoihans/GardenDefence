@@ -15,6 +15,7 @@ const PEA_SCENE := preload("res://scenes/projectiles/Pea.tscn")
 @export var row_offsets: Array[int] = [0]      # 三线射手 = [-1, 0, 1]
 
 var _fire_timer: Timer
+var _saved_fire_interval: float = 0.0           # 肥料回退用
 
 func _on_ready_setup() -> void:
     _fire_timer = Timer.new()
@@ -76,3 +77,24 @@ func _shoot_pea(row_offset: int = 0) -> void:
     var t := create_tween()
     t.tween_property(sprite, "position", Vector2(-3, 0), 0.05)
     t.tween_property(sprite, "position", Vector2.ZERO, 0.1)
+
+# 肥料：5 秒内 fire_interval 缩到 1/3（即射速 ×3）
+func fertilize() -> void:
+    if _boost_active or _fire_timer == null:
+        return
+    _boost_active = true
+    _saved_fire_interval = _fire_timer.wait_time
+    _fire_timer.wait_time = _saved_fire_interval / 3.0
+    _apply_boost_visual(true)
+    var t := Timer.new()
+    t.one_shot = true
+    t.wait_time = BOOST_DURATION
+    add_child(t)
+    t.timeout.connect(_on_fertilize_finished)
+    t.start()
+
+func _on_fertilize_finished() -> void:
+    if _fire_timer != null:
+        _fire_timer.wait_time = _saved_fire_interval
+    _boost_active = false
+    _apply_boost_visual(false)

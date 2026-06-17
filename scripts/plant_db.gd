@@ -85,12 +85,28 @@ const PLANTS: Dictionary = {
         "scene_path": "res://scenes/plants/PotatoMine.tscn",
         "icon_path": "res://assets/plants/potato_mine.svg",
     },
+    "sun_shroom": {
+        "display_name": "太阳菇",
+        "cost": 25,
+        "max_hp": 60,
+        "cooldown": 7.5,
+        "scene_path": "res://scenes/plants/SunShroom.tscn",
+        "icon_path": "res://assets/plants/sun_shroom.svg",
+    },
+    "jalapeno": {
+        "display_name": "辣椒",
+        "cost": 125,
+        "max_hp": 60,
+        "cooldown": 50.0,
+        "scene_path": "res://scenes/plants/Jalapeno.tscn",
+        "icon_path": "res://assets/plants/jalapeno.svg",
+    },
 }
 
 # HUD 上从左到右展示的植物 ID 顺序
 const HUD_PLANT_ORDER: Array[String] = [
     "sunflower", "peashooter", "wallnut", "cherrybomb", "repeater",
-    "freezer", "threepeater", "potato_mine",
+    "freezer", "threepeater", "potato_mine", "sun_shroom", "jalapeno",
 ]
 
 # 僵尸数据 ------------------------------------------------------------
@@ -147,6 +163,20 @@ const ZOMBIES: Dictionary = {
         "damage_per_sec": 30.0,
         "scene_path": "res://scenes/zombies/FlagZombie.tscn",
     },
+    "dancer": {
+        "display_name": "舞王僵尸",
+        "max_hp": 400,
+        "speed": 18.0,
+        "damage_per_sec": 30.0,
+        "scene_path": "res://scenes/zombies/DancerZombie.tscn",
+    },
+    "imp": {
+        "display_name": "小鬼僵尸",
+        "max_hp": 80,
+        "speed": 32.0,
+        "damage_per_sec": 0.0,
+        "scene_path": "res://scenes/zombies/ImpZombie.tscn",
+    },
 }
 
 # 关卡配置 ------------------------------------------------------------
@@ -155,6 +185,10 @@ const ZOMBIES: Dictionary = {
 #   name        : 显示名
 #   description : 选关界面的描述
 #   unlock      : 默认 true（后续可加锁）
+#   environment : "day" | "twilight" | "night" | "roof"，仅作视觉
+#   no_sky_sun  : 夜晚关设为 true，禁用天降阳光
+#   start_sun   : 开局阳光
+#   sky_tint    : 背景色
 #   waves       : 与原 WAVES 元素同结构：spawns / interval / rest
 const LEVELS: Array = [
     {
@@ -162,6 +196,10 @@ const LEVELS: Array = [
         "name": "白天 - 第1天",
         "description": "入门关：5 波普通僵尸，熟悉向日葵和豌豆射手。",
         "unlock": true,
+        "environment": "day",
+        "no_sky_sun": false,
+        "start_sun": 50,
+        "sky_tint": Color(0.40, 0.60, 0.85, 1),
         "waves": [
             {"spawns": ["basic", "basic", "basic"], "interval": 6.0, "rest": 10.0},
             {"spawns": ["basic", "basic", "basic", "basic", "conehead"], "interval": 5.0, "rest": 10.0},
@@ -177,6 +215,10 @@ const LEVELS: Array = [
         "name": "白天 - 第2天",
         "description": "新增撑杆跳跃、铁桶、高血路障。会需要坚果墙拖延。",
         "unlock": true,
+        "environment": "day",
+        "no_sky_sun": false,
+        "start_sun": 50,
+        "sky_tint": Color(0.40, 0.60, 0.85, 1),
         "waves": [
             {"spawns": ["basic", "flag", "basic"], "interval": 5.0, "rest": 10.0},
             {"spawns": ["conehead", "basic", "basic", "buckethead"], "interval": 4.5, "rest": 10.0},
@@ -193,6 +235,10 @@ const LEVELS: Array = [
         "name": "白天 - 第3天（终日）",
         "description": "全僵尸登场 + 读报 / 橄榄球精英。推荐提前摆出双发射手和寒冰射手。",
         "unlock": true,
+        "environment": "day",
+        "no_sky_sun": false,
+        "start_sun": 50,
+        "sky_tint": Color(0.40, 0.60, 0.85, 1),
         "waves": [
             {"spawns": ["basic", "flag", "conehead", "basic"], "interval": 4.0, "rest": 9.0},
             {"spawns": ["conehead", "newspaper", "basic", "basic", "buckethead", "basic"],
@@ -205,6 +251,62 @@ const LEVELS: Array = [
             {"spawns": ["football", "pole_vaulter", "newspaper", "buckethead", "basic", "conehead",
                         "football", "newspaper", "pole_vaulter", "buckethead", "basic", "conehead",
                         "football", "newspaper", "buckethead", "conehead"],
+             "interval": 2.5, "rest": 0.0},
+        ],
+    },
+    # ---------- 变体 ----------
+    {
+        "id": "twilight1",
+        "name": "傍晚 - 第1天",
+        "description": "氛围偏暖、节奏更紧。开局 75 阳光可用。",
+        "unlock": true,
+        "environment": "twilight",
+        "no_sky_sun": false,
+        "start_sun": 75,
+        "sky_tint": Color(0.90, 0.55, 0.30, 1),
+        "waves": [
+            {"spawns": ["basic", "basic", "basic", "basic"], "interval": 4.5, "rest": 8.0},
+            {"spawns": ["basic", "conehead", "basic", "conehead", "buckethead"], "interval": 4.0, "rest": 8.0},
+            {"spawns": ["basic", "conehead", "buckethead", "basic", "basic", "conehead", "buckethead"],
+             "interval": 3.5, "rest": 8.0},
+            {"spawns": ["basic", "basic", "buckethead", "conehead", "basic", "conehead", "buckethead", "conehead"],
+             "interval": 3.0, "rest": 0.0},
+        ],
+    },
+    {
+        "id": "night2",
+        "name": "夜晚 - 第2天",
+        "description": "无天降阳光。必须先种 3~4 棵太阳菇自给自足。",
+        "unlock": true,
+        "environment": "night",
+        "no_sky_sun": true,
+        "start_sun": 75,
+        "sky_tint": Color(0.10, 0.12, 0.25, 1),
+        "waves": [
+            {"spawns": ["basic", "basic", "basic"], "interval": 7.0, "rest": 10.0},
+            {"spawns": ["basic", "basic", "conehead", "basic"], "interval": 5.5, "rest": 10.0},
+            {"spawns": ["basic", "conehead", "basic", "buckethead", "basic"], "interval": 4.5, "rest": 9.0},
+            {"spawns": ["conehead", "basic", "buckethead", "basic", "conehead", "buckethead"], "interval": 4.0, "rest": 9.0},
+            {"spawns": ["basic", "conehead", "basic", "buckethead", "conehead", "basic", "buckethead"],
+             "interval": 3.0, "rest": 0.0},
+        ],
+    },
+    {
+        "id": "roof3",
+        "name": "屋顶 - 第3天",
+        "description": "终日精英 + 舞王召唤 + 小鬼自爆，需要辣椒 / 樱桃处理。",
+        "unlock": true,
+        "environment": "roof",
+        "no_sky_sun": false,
+        "start_sun": 50,
+        "sky_tint": Color(0.30, 0.45, 0.70, 1),
+        "waves": [
+            {"spawns": ["basic", "flag", "football"], "interval": 4.5, "rest": 9.0},
+            {"spawns": ["football", "newspaper", "imp", "basic", "conehead"], "interval": 4.0, "rest": 9.0},
+            {"spawns": ["imp", "dancer", "basic", "conehead", "football", "basic"], "interval": 3.5, "rest": 9.0},
+            {"spawns": ["dancer", "football", "imp", "newspaper", "basic", "conehead", "imp"],
+             "interval": 3.0, "rest": 9.0},
+            {"spawns": ["football", "imp", "dancer", "newspaper", "conehead", "basic", "football", "imp", "dancer"],
              "interval": 2.5, "rest": 0.0},
         ],
     },

@@ -37,3 +37,17 @@ func _produce_sun() -> void:
     var t := create_tween()
     t.tween_property(sprite, "scale", Vector2(1.15, 0.85), 0.08)
     t.tween_property(sprite, "scale", Vector2.ONE, 0.15)
+
+# 肥料：5 秒内每 1 秒产 1 颗
+func fertilize() -> void:
+    if _boost_active:
+        return
+    _boost_active = true
+    _apply_boost_visual(true)
+    for i in 5:
+        await get_tree().create_timer(1.0, false).timeout
+        if not is_instance_valid(self):
+            return
+        _produce_sun()
+    _boost_active = false
+    _apply_boost_visual(false)

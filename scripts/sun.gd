@@ -74,5 +74,6 @@ func _collect() -> void:
 
 func _finish_collect() -> void:
     GameState.sun_amount += VALUE
+    AchievementDB.on_sun_collected(VALUE)
     Sfx.play_sun_collect()
     queue_free()

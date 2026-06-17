@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/imp_zombie.gd" id="1_iz"]
+[ext_resource type="Texture2D" path="res://assets/zombies/imp_zombie.svg" id="2_iz"]
+
+[node name="ImpZombie" type="Node2D"]
+script = ExtResource("1_iz")
+max_hp = 80.0
+base_speed = 32.0
+damage_per_sec = 0.0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_iz")

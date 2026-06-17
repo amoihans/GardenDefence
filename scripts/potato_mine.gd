@@ -23,7 +23,7 @@ func _on_ready_setup() -> void:
     body.position.y = 20
     body.modulate = Color(0.55, 0.45, 0.35)
     # 装填结束后，弹一下 + 变亮表示就绪
-    await get_tree().create_timer(ARM_TIME).timeout
+    await get_tree().create_timer(ARM_TIME, false).timeout
     if not is_instance_valid(self):
         return
     _armed = true
@@ -36,6 +36,16 @@ func _on_ready_setup() -> void:
     for i in 3:
         t.tween_property(body, "modulate", Color(1.5, 0.6, 0.6), 0.1)
         t.tween_property(body, "modulate", Color.WHITE, 0.1)
+
+# 肥料：跳过装填时间，立刻就武装
+func fertilize() -> void:
+    if _armed:
+        return
+    _armed = true
+    if body != null:
+        body.scale = Vector2(1.0, 1.0)
+        body.position = Vector2.ZERO
+        body.modulate = Color.WHITE
 
 func _process(_delta: float) -> void:
     if not _armed: return

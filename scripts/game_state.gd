@@ -26,6 +26,10 @@ var current_wave: int = 0
 var total_waves: int = 0
 var is_game_over: bool = false
 
+# 肥料：每关开局送 3 罐
+var fertilizer: int = 3 : set = _set_fertilizer
+signal fertilizer_changed(new_amount: int)
+
 # 当前关卡 id（选关界面写入；Game 启动时读取）
 var current_level_id: String = "day1"
 
@@ -45,6 +49,7 @@ func reset() -> void:
     current_wave = 0
     is_game_over = false
     selected_plant_id = ""
+    fertilizer = 3
 
 func _ready() -> void:
     _load_save()
@@ -91,6 +96,10 @@ func get_current_level() -> Dictionary:
 func _set_sun(value: int) -> void:
     sun_amount = max(0, value)
     sun_changed.emit(sun_amount)
+
+func _set_fertilizer(value: int) -> void:
+    fertilizer = max(0, value)
+    fertilizer_changed.emit(fertilizer)
 
 func _set_selected(value: String) -> void:
     selected_plant_id = value

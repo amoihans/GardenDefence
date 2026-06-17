@@ -81,3 +81,8 @@ func _spawn_zombie(zombie_id: String) -> void:
         game.add_child(z)
     else:
         get_parent().add_child(z)
+    # 成就系统：监听死亡
+    z.died.connect(_on_zombie_died)
+
+func _on_zombie_died(_z: Zombie) -> void:
+    AchievementDB.on_zombie_killed()

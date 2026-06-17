@@ -8,12 +8,14 @@ const SettingsPanelScene := preload("res://scenes/ui/SettingsPanel.tscn")
 
 @onready var start_btn: Button = $Center/VBox/StartBtn
 @onready var select_btn: Button = $Center/VBox/SelectBtn
+@onready var achievements_btn: Button = $Center/VBox/AchievementsBtn
 @onready var settings_btn: Button = $Center/VBox/SettingsBtn
 @onready var quit_btn: Button = $Center/VBox/QuitBtn
 
 func _ready() -> void:
     start_btn.pressed.connect(_on_start)
     select_btn.pressed.connect(_on_select)
+    achievements_btn.pressed.connect(_on_achievements)
     settings_btn.pressed.connect(_on_settings)
     quit_btn.pressed.connect(_on_quit)
 
@@ -25,6 +27,10 @@ func _on_start() -> void:
 # 进入选关界面
 func _on_select() -> void:
     get_tree().change_scene_to_file("res://scenes/ui/LevelSelect.tscn")
+
+# 进入成就页面
+func _on_achievements() -> void:
+    get_tree().change_scene_to_file("res://scenes/ui/AchievementsView.tscn")
 
 # 弹出设置面板
 func _on_settings() -> void:

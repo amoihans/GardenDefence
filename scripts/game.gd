@@ -12,10 +12,14 @@ const SunScene := preload("res://scenes/pickups/Sun.tscn")
 const GameOverPanelScene := preload("res://scenes/ui/GameOverPanel.tscn")
 const PauseMenuScene := preload("res://scenes/ui/PauseMenu.tscn")
 
+# 最后一个种下的植物（用于施肥）
+var _last_plant: Plant = null
+
 @onready var lawn: Lawn = $Lawn
 @onready var hud: HUD = $HUD
 @onready var wave_manager: WaveManager = $WaveManager
 @onready var sky_timer: Timer = $SkySunTimer
+@onready var background: ColorRect = $Background
 
 func _ready() -> void:
     add_to_group("game_root")
@@ -42,6 +46,18 @@ func _unhandled_input(event: InputEvent) -> void:
     elif event.is_action_pressed("slot_4"): _try_select_index(3)
     elif event.is_action_pressed("slot_5"): _try_select_index(4)
     elif event.is_action_pressed("slot_6"): GameState.selected_plant_id = "shovel"
+    elif event.is_action_pressed("fertilize"):
+        _use_fertilize()
+
+# 施肥：给最后种下的植物 + 视觉反馈
+func _use_fertilize() -> void:
+    if GameState.fertilizer <= 0:
+        return
+    if not is_instance_valid(_last_plant):
+        return
+    _last_plant.fertilize()
+    GameState.fertilizer -= 1
+    AchievementDB.on_fertilizer_used()
 
 func _try_select_index(i: int) -> void:
     if i < 0 or i >= PlantDB.HUD_PLANT_ORDER.size(): return
@@ -76,6 +92,15 @@ func _place_plant(col: int, row: int, plant_id: String) -> void:
     lawn.register_plant(col, row, plant)
     hud.start_cooldown_for(plant_id)
     GameState.selected_plant_id = ""
+    # 记录"最后一个种下的植物"，作为肥料目标
+    _last_plant = plant
+    plant.died.connect(_on_last_plant_died.bind(plant))
+    # 成就
+    AchievementDB.on_plant_planted(plant_id)
+
+func _on_last_plant_died(plant: Plant) -> void:
+    if _last_plant == plant:
+        _last_plant = null
 
 # ---------- 铲除 ----------
 func _on_shovel_requested(col: int, row: int) -> void:
@@ -104,6 +129,7 @@ func _toggle_pause() -> void:
 
 # ---------- 胜负 ----------
 func _on_game_won() -> void:
+    AchievementDB.on_level_cleared(GameState.current_level_id)
     _show_endgame(true)
 
 func _on_game_lost() -> void:
@@ -117,3 +143,16 @@ func _show_endgame(won: bool) -> void:
 # ---------- 关卡 ----------
 func _on_level_loaded(level_data: Dictionary) -> void:
     hud.set_level_name(level_data.name)
+    # 应用环境
+    if level_data.has("sky_tint"):
+        background.color = level_data.sky_tint
+    if level_data.get("no_sky_sun", false):
+        sky_timer.stop()
+    else:
+        if sky_timer.is_stopped():
+            sky_timer.start()
+    # 开局阳光覆盖
+    if level_data.has("start_sun"):
+        GameState.sun_amount = level_data.start_sun
+    # 成就系统：通知当前关卡
+    AchievementDB.on_level_started(level_data.id)

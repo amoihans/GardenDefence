@@ -9,19 +9,25 @@ const FUSE_TIME := 1.2
 const EXPLOSION_DAMAGE := 1800.0
 const EXPLOSION_RADIUS_CELLS := 1.5            # 半径 1.5 格 ≈ 3x3
 
+var _fuse_tween: Tween
+var _fertilized: bool = false
+
 func _on_ready_setup() -> void:
     contact_damage_immune = true                # 引爆前不会被啃死
     # 节奏感：抖动 → 膨胀 → 爆炸
-    var t := create_tween()
-    t.set_loops(int(FUSE_TIME / 0.2))
-    t.tween_property(sprite, "scale", Vector2(1.1, 1.1), 0.1)
-    t.tween_property(sprite, "scale", Vector2(1.0, 1.0), 0.1)
+    _fuse_tween = create_tween()
+    _fuse_tween.set_loops(int(FUSE_TIME / 0.2))
+    _fuse_tween.tween_property(sprite, "scale", Vector2(1.1, 1.1), 0.1)
+    _fuse_tween.tween_property(sprite, "scale", Vector2(1.0, 1.0), 0.1)
     # 引信结束 → 爆炸
-    await get_tree().create_timer(FUSE_TIME).timeout
+    await get_tree().create_timer(FUSE_TIME, false).timeout
     if is_instance_valid(self):
         _explode()
 
 func _explode() -> void:
+    if _fertilized:
+        return
+    _fertilized = true
     var center := global_position
     var radius_px: float = EXPLOSION_RADIUS_CELLS * PlantDB.CELL_SIZE
     Sfx.play_explosion()
@@ -35,6 +41,12 @@ func _explode() -> void:
             z.take_damage(EXPLOSION_DAMAGE)
     # 自身销毁
     queue_free()
+
+# 肥料：立刻引爆
+func fertilize() -> void:
+    if _fuse_tween != null and _fuse_tween.is_valid():
+        _fuse_tween.kill()
+    _explode()
 
 func _spawn_blast(at: Vector2, radius: float) -> void:
     # 用 ColorRect + tween 做个最简单的爆炸圈
