@@ -89,4 +89,6 @@ func _apply_boost_visual(active: bool) -> void:
 
 func die() -> void:
     died.emit(self)
+    # 飘叶子
+    Particles.leaves(self, global_position)
     queue_free()

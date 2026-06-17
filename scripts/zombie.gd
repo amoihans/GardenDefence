@@ -113,6 +113,8 @@ func _update_speed() -> void:
 func die() -> void:
 	died.emit(self)
 	Sfx.play_zombie_die()
+	# 死亡粒子：紫色碎屑（普通僵尸）/ 灰色（护盾类由子类改）
+	Particles.burst(self, global_position, 12, Color(0.5, 0.2, 0.6, 1.0), 90.0, 0.7, 180.0)
 	var t := create_tween()
 	t.parallel().tween_property(sprite, "rotation", deg_to_rad(-90), 0.4)
 	t.parallel().tween_property(self, "modulate:a", 0.0, 0.4)

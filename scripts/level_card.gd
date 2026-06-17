@@ -21,9 +21,12 @@ func setup(index: int, level: Dictionary) -> void:
 	desc_label.text = level.description
 	var waves: Array = level.waves
 	var completed: bool = GameState.completed_levels.get(_level_id, false)
+	var record: Dictionary = GameState.get_level_record(_level_id)
 	var meta_parts: Array = ["共 %d 波" % waves.size()]
 	if completed:
 		meta_parts.append("已通关")
+	if record.has("best_time"):
+		meta_parts.append("最佳 %.1fs" % record.best_time)
 	meta_label.text = "  ·  ".join(meta_parts)
 	start_btn.pressed.connect(_on_start)
 	var unlocked: bool = GameState.is_level_unlocked(index)

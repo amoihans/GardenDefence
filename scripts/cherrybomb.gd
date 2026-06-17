@@ -40,6 +40,10 @@ func _explode() -> void:
         if z.global_position.distance_to(center) <= radius_px:
             z.take_damage(EXPLOSION_DAMAGE)
     # 自身销毁
+    # 屏幕震动
+    var game := get_tree().get_first_node_in_group("game_root")
+    if game:
+        game.shake(20.0, 0.35)
     queue_free()
 
 # 肥料：立刻引爆
@@ -49,6 +53,9 @@ func fertilize() -> void:
     _explode()
 
 func _spawn_blast(at: Vector2, radius: float) -> void:
+    # 火花（黄/红）
+    Particles.sparks(self, at, Color(1.0, 0.8, 0.0))
+    Particles.sparks(self, at, Color(1.0, 0.3, 0.0))
     # 用 ColorRect + tween 做个最简单的爆炸圈
     var ring := ColorRect.new()
     ring.color = Color(1.0, 0.6, 0.0, 0.8)

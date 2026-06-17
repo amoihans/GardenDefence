@@ -3,15 +3,17 @@
 # 胜利 / 失败结算面板
 #   - 胜利时写入完成记录（持久化到 user://save.cfg）
 #   - 胜利时显示"下一关"按钮（如果还有）
+#   - 显示新纪录提示 + 用时
 # ----------------------------------------------------------------------
 extends CanvasLayer
 
 @onready var title: Label = $Backdrop/Card/Title
+@onready var stat_label: Label = $Backdrop/Card/StatLabel
 @onready var next_btn: Button = $Backdrop/Card/VBox/NextBtn
 @onready var retry_btn: Button = $Backdrop/Card/VBox/RetryBtn
 @onready var menu_btn: Button = $Backdrop/Card/VBox/MenuBtn
 
-func setup(won: bool) -> void:
+func setup(won: bool, is_new_record: bool = false, elapsed: float = 0.0) -> void:
     # 等场景就绪后再赋值，避免 onready 为 null
     await ready
     if won:
@@ -26,10 +28,21 @@ func setup(won: bool) -> void:
             next_btn.disabled = false
         else:
             next_btn.visible = false
+        # 统计 + 新纪录
+        var record: Dictionary = GameState.get_level_record(GameState.current_level_id)
+        var record_text: String = "⏱ 用时 %.1fs   ☀ 剩余 %d" % [elapsed, GameState.sun_amount]
+        if is_new_record:
+            stat_label.text = "🏆 新纪录！\n" + record_text
+            stat_label.modulate = Color(1.0, 0.9, 0.4)
+        else:
+            stat_label.text = record_text + "   最佳 %.1fs" % record.get("best_time", 0.0)
+            stat_label.modulate = Color(0.85, 0.85, 0.95)
+        stat_label.visible = true
     else:
         title.text = "💀 僵尸进家了 …"
         title.modulate = Color(1.0, 0.4, 0.4)
         next_btn.visible = false
+        stat_label.visible = false
 
 func _ready() -> void:
     next_btn.pressed.connect(_on_next)

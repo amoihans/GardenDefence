@@ -19,6 +19,8 @@ func _eat(target: Plant, delta: float) -> void:
 	_explode()
 
 func _explode() -> void:
+	# 火花
+	Particles.sparks(self, global_position, Color(1.0, 0.5, 0.0))
 	# 视觉：小范围爆炸
 	var ring := ColorRect.new()
 	ring.color = Color(1.0, 0.4, 0.0, 0.9)
@@ -37,4 +39,7 @@ func _explode() -> void:
 	t.parallel().tween_property(ring, "modulate:a", 0.0, 0.3)
 	t.tween_callback(ring.queue_free)
 	Sfx.play_explosion()
+	var game := get_tree().get_first_node_in_group("game_root")
+	if game:
+		game.shake(14.0, 0.25)
 	die()

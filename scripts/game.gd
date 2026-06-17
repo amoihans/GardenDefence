@@ -20,6 +20,11 @@ var _last_plant: Plant = null
 @onready var wave_manager: WaveManager = $WaveManager
 @onready var sky_timer: Timer = $SkySunTimer
 @onready var background: ColorRect = $Background
+@onready var camera: Camera2D = $Camera
+
+# 屏幕震动状态
+var _shake_intensity: float = 0.0
+var _shake_remaining: float = 0.0
 
 func _ready() -> void:
     add_to_group("game_root")
@@ -33,6 +38,27 @@ func _ready() -> void:
     sky_timer.timeout.connect(_drop_sky_sun)
     wave_manager.level_loaded.connect(_on_level_loaded)
     wave_manager.start()           # 不传 level_id → 读 GameState.current_level_id
+    _shake_orig_pos = camera.position
+
+# 屏幕震动
+func _process(delta: float) -> void:
+    if _shake_remaining > 0.0:
+        _shake_remaining -= delta
+        if _shake_remaining <= 0.0:
+            camera.position = _shake_orig_pos
+        else:
+            var offset := Vector2(
+                randf_range(-_shake_intensity, _shake_intensity),
+                randf_range(-_shake_intensity, _shake_intensity))
+            camera.position = _shake_orig_pos + offset
+
+# 调用：触发屏幕震动
+#   intensity: 偏移像素（8~20 常用）
+#   duration: 持续秒数
+func shake(intensity: float = 12.0, duration: float = 0.25) -> void:
+    _shake_intensity = intensity
+    # 取较大的：允许重置
+    _shake_remaining = max(_shake_remaining, duration)
 
 func _unhandled_input(event: InputEvent) -> void:
     # 数字键 1~5 选植物，6 选铲子
@@ -95,6 +121,8 @@ func _place_plant(col: int, row: int, plant_id: String) -> void:
     # 记录"最后一个种下的植物"，作为肥料目标
     _last_plant = plant
     plant.died.connect(_on_last_plant_died.bind(plant))
+    if plant_id == "wallnut":
+        _level_used_wallnut = true
     # 成就 + 图鉴
     AchievementDB.on_plant_planted(plant_id)
     CodeBookDB.on_plant_planted(plant_id)
@@ -131,14 +159,18 @@ func _toggle_pause() -> void:
 # ---------- 胜负 ----------
 func _on_game_won() -> void:
     AchievementDB.on_level_cleared(GameState.current_level_id)
-    _show_endgame(true)
+    # 记录最佳：通关时间、剩余阳光、是否用过坚果
+    var elapsed: float = (Time.get_ticks_msec() / 1000.0) - _level_start_time
+    var is_new_record: bool = GameState.record_completion(
+        GameState.current_level_id, elapsed, GameState.sun_amount, _level_used_wallnut)
+    _show_endgame(true, is_new_record, elapsed)
 
 func _on_game_lost() -> void:
     _show_endgame(false)
 
-func _show_endgame(won: bool) -> void:
+func _show_endgame(won: bool, is_new_record: bool = false, elapsed: float = 0.0) -> void:
     var panel := GameOverPanelScene.instantiate()
-    panel.setup(won)
+    panel.setup(won, is_new_record, elapsed)
     add_child(panel)
 
 # ---------- 关卡 ----------
@@ -157,3 +189,6 @@ func _on_level_loaded(level_data: Dictionary) -> void:
         GameState.sun_amount = level_data.start_sun
     # 成就系统：通知当前关卡
     AchievementDB.on_level_started(level_data.id)
+    # 计时起点
+    _level_start_time = Time.get_ticks_msec() / 1000.0
+    _level_used_wallnut = false

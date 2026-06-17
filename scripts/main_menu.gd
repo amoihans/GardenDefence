@@ -14,6 +14,7 @@ const SettingsPanelScene := preload("res://scenes/ui/SettingsPanel.tscn")
 @onready var quit_btn: Button = $Center/VBox/QuitBtn
 
 func _ready() -> void:
+    Sfx.play_bgm()                    # 进入主菜单自动播放 BGM
     start_btn.pressed.connect(_on_start)
     select_btn.pressed.connect(_on_select)
     achievements_btn.pressed.connect(_on_achievements)

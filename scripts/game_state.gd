@@ -43,6 +43,9 @@ signal selected_plant_changed(new_id: String)
 var completed_levels: Dictionary = {}
 const SAVE_PATH := "user://save.cfg"
 
+# 关卡最佳记录 { level_id: { best_time: float, no_wallnut: bool, max_sun: int } }
+var level_records: Dictionary = {}
+
 # 重置接口 ------------------------------------------------------------
 func reset() -> void:
     sun_amount = 50
@@ -59,16 +62,37 @@ func _load_save() -> void:
     var cfg := ConfigFile.new()
     if cfg.load(SAVE_PATH) == OK:
         completed_levels = cfg.get_value("progress", "completed", {}).duplicate(true)
+        level_records = cfg.get_value("progress", "records", {}).duplicate(true)
 
 func _save_to_disk() -> void:
     var cfg := ConfigFile.new()
     cfg.set_value("progress", "completed", completed_levels)
+    cfg.set_value("progress", "records", level_records)
     cfg.save(SAVE_PATH)
 
 # 标记通关；立即写盘
 func complete_level(level_id: String) -> void:
     completed_levels[level_id] = true
     _save_to_disk()
+
+# 记录一次通关：time（秒）、sun_remaining、used_wallnut
+# 返回 is_new_record: bool
+func record_completion(level_id: String, time: float, sun_remaining: int, used_wallnut: bool) -> bool:
+    var prev: Dictionary = level_records.get(level_id, {})
+    var is_new: bool = false
+    if not prev.has("best_time") or time < prev.best_time:
+        is_new = true
+    var new_record: Dictionary = {
+        "best_time": min(time, prev.get("best_time", INF)),
+        "max_sun": max(sun_remaining, prev.get("max_sun", 0)),
+        "no_wallnut": prev.get("no_wallnut", false) or not used_wallnut,
+    }
+    level_records[level_id] = new_record
+    _save_to_disk()
+    return is_new
+
+func get_level_record(level_id: String) -> Dictionary:
+    return level_records.get(level_id, {})
 
 # 是否解锁：
 #   - 第一关默认解锁
