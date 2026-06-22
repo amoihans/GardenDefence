@@ -1,96 +1,102 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://ck400ltpseyj4"]
 
-[ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_mm"]
-[ext_resource type="Texture2D" path="res://icon.svg" id="2_mm"]
+[ext_resource type="Script" uid="uid://ddehbdyp85myu" path="res://scripts/main_menu.gd" id="1_mm"]
+[ext_resource type="Texture2D" uid="uid://bmpjbmbpe11cb" path="res://icon.svg" id="2_mm"]
 
-[node name="MainMenu" type="Control"]
+[node name="MainMenu" type="Control" unique_id=75431109]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = 2.0
+offset_right = -5.0
+offset_bottom = 144.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_mm")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=395438202]
+layout_mode = 0
 offset_right = 1280.0
 offset_bottom = 720.0
 color = Color(0.42, 0.62, 0.27, 1)
 
-[node name="Title" type="Label" parent="."]
-offset_left = 0.0
-offset_top = 110.0
-offset_right = 1280.0
-offset_bottom = 200.0
+[node name="Title" type="Label" parent="." unique_id=265549993]
+layout_mode = 0
+offset_left = -1.0
+offset_top = 3.0
+offset_right = 1279.0
+offset_bottom = 93.0
+theme_override_colors/font_color = Color(1, 1, 0.7, 1)
+theme_override_font_sizes/font_size = 64
 text = "庭院保卫战"
 horizontal_alignment = 1
 vertical_alignment = 1
-theme_override_colors/font_color = Color(1, 1, 0.7, 1)
-theme_override_font_sizes/font_size = 64
 
-[node name="Subtitle" type="Label" parent="."]
-offset_left = 0.0
-offset_top = 200.0
-offset_right = 1280.0
-offset_bottom = 240.0
-text = "Garden Defense  ——  一份 Godot 4 学习项目"
-horizontal_alignment = 1
-vertical_alignment = 1
-theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 0.85)
-theme_override_font_sizes/font_size = 20
-
-[node name="Logo" type="TextureRect" parent="."]
-offset_left = 576.0
-offset_top = 260.0
-offset_right = 704.0
-offset_bottom = 388.0
+[node name="Logo" type="TextureRect" parent="." unique_id=2136366462]
+layout_mode = 0
+offset_left = 574.0
+offset_top = 87.0
+offset_right = 702.0
+offset_bottom = 215.0
 texture = ExtResource("2_mm")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Center" type="CenterContainer" parent="."]
-offset_top = 420.0
+[node name="Center" type="CenterContainer" parent="." unique_id=1115115829]
+layout_mode = 0
+offset_top = 242.0
 offset_right = 1280.0
-offset_bottom = 680.0
+offset_bottom = 682.0
 
-[node name="VBox" type="VBoxContainer" parent="Center"]
+[node name="VBox" type="VBoxContainer" parent="Center" unique_id=2026933198]
+layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="StartBtn" type="Button" parent="Center/VBox"]
+[node name="StartBtn" type="Button" parent="Center/VBox" unique_id=1969582104]
 custom_minimum_size = Vector2(260, 60)
-text = "▶ 快速开始"
+layout_mode = 2
 theme_override_font_sizes/font_size = 26
+text = "▶ 快速开始"
 
-[node name="SelectBtn" type="Button" parent="Center/VBox"]
+[node name="SelectBtn" type="Button" parent="Center/VBox" unique_id=711297306]
 custom_minimum_size = Vector2(260, 60)
-text = "📋 选关"
+layout_mode = 2
 theme_override_font_sizes/font_size = 24
+text = "📋 选关"
 
-[node name="AchievementsBtn" type="Button" parent="Center/VBox"]
+[node name="AchievementsBtn" type="Button" parent="Center/VBox" unique_id=286166441]
 custom_minimum_size = Vector2(260, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "🏆 成就"
-theme_override_font_sizes/font_size = 22
 
-[node name="CodeBookBtn" type="Button" parent="Center/VBox"]
+[node name="CodeBookBtn" type="Button" parent="Center/VBox" unique_id=1506472261]
 custom_minimum_size = Vector2(260, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "📖 图鉴"
-theme_override_font_sizes/font_size = 22
 
-[node name="SettingsBtn" type="Button" parent="Center/VBox"]
+[node name="SettingsBtn" type="Button" parent="Center/VBox" unique_id=1253836003]
 custom_minimum_size = Vector2(260, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "⚙ 设置"
-theme_override_font_sizes/font_size = 22
 
-[node name="QuitBtn" type="Button" parent="Center/VBox"]
+[node name="QuitBtn" type="Button" parent="Center/VBox" unique_id=399279200]
 custom_minimum_size = Vector2(260, 60)
-text = "退出"
+layout_mode = 2
 theme_override_font_sizes/font_size = 22
+text = "退出"
 
-[node name="Hint" type="Label" parent="."]
-offset_left = 0.0
-offset_top = 690.0
-offset_right = 1280.0
-offset_bottom = 716.0
+[node name="Hint" type="Label" parent="." unique_id=243351688]
+layout_mode = 0
+offset_left = -4.0
+offset_top = 693.0
+offset_right = 1276.0
+offset_bottom = 719.0
+theme_override_colors/font_color = Color(1, 1, 1, 0.7)
+theme_override_font_sizes/font_size = 14
 text = "操作：左键收阳光 / 1-5 选植物 / 6 选铲子 / 拖拽卡片直接种下 / 右键或 Esc 取消 / Space 暂停"
 horizontal_alignment = 1
 vertical_alignment = 1
-theme_override_colors/font_color = Color(1, 1, 1, 0.7)
-theme_override_font_sizes/font_size = 14
