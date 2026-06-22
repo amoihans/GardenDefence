@@ -13,9 +13,13 @@ extends CanvasLayer
 @onready var retry_btn: Button = $Backdrop/Card/VBox/RetryBtn
 @onready var menu_btn: Button = $Backdrop/Card/VBox/MenuBtn
 
-func setup(won: bool, is_new_record: bool = false, elapsed: float = 0.0) -> void:
+func setup(won: bool, is_new_record: bool = false, elapsed: float = 0.0, endless_waves: int = 0) -> void:
     # 等场景就绪后再赋值，避免 onready 为 null
     await ready
+    var is_endless: bool = GameState.current_level_id == "endless"
+    if is_endless:
+        _setup_endless(endless_waves, is_new_record)
+        return
     if won:
         title.text = "🎉 守住了！"
         title.modulate = Color(0.4, 1.0, 0.4)
@@ -43,6 +47,25 @@ func setup(won: bool, is_new_record: bool = false, elapsed: float = 0.0) -> void
         title.modulate = Color(1.0, 0.4, 0.4)
         next_btn.visible = false
         stat_label.visible = false
+
+# 无尽模式结算
+func _setup_endless(waves: int, is_new_record: bool) -> void:
+    # 写分
+    var actual_new: bool = GameState.record_endless(waves)
+    var record: Dictionary = GameState.get_level_record("endless")
+    var best: int = int(record.get("best_waves", 0))
+    # 文案
+    title.text = "💀 无尽模式结束"
+    title.modulate = Color(1.0, 0.5, 0.3)
+    next_btn.visible = false                                  # 永远没有"下一关"
+    retry_btn.text = "↻ 再来一次"
+    if actual_new:
+        stat_label.text = "🏆 新纪录！\n坚持了 %d 波" % waves
+        stat_label.modulate = Color(1.0, 0.9, 0.4)
+    else:
+        stat_label.text = "坚持了 %d 波   最佳 %d 波" % [waves, best]
+        stat_label.modulate = Color(0.85, 0.85, 0.95)
+    stat_label.visible = true
 
 func _ready() -> void:
     next_btn.pressed.connect(_on_next)

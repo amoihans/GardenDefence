@@ -94,6 +94,17 @@ func record_completion(level_id: String, time: float, sun_remaining: int, used_w
 func get_level_record(level_id: String) -> Dictionary:
     return level_records.get(level_id, {})
 
+# 记录无尽模式最高波数
+func record_endless(waves: int) -> bool:
+    var prev: Dictionary = level_records.get("endless", {})
+    var prev_best: int = int(prev.get("best_waves", 0))
+    var is_new: bool = waves > prev_best
+    level_records["endless"] = {
+        "best_waves": max(waves, prev_best),
+    }
+    _save_to_disk()
+    return is_new
+
 # 是否解锁：
 #   - 第一关默认解锁
 #   - 第 N 关解锁 = 第 N-1 关已通关

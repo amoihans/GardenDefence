@@ -11,10 +11,12 @@ const LEVEL_CARD_SCENE := preload("res://scenes/ui/LevelCard.tscn")
 
 @onready var level_list: VBoxContainer = $Scroll/Spacer/List
 @onready var back_btn: Button = $TopBar/BackBtn
+@onready var endless_btn: Button = $TopBar/EndlessBtn
 @onready var title: Label = $TopBar/Title
 
 func _ready() -> void:
     back_btn.pressed.connect(_on_back)
+    endless_btn.pressed.connect(_on_endless)
     title.text = "选关"
     _build_level_cards()
 
@@ -36,3 +38,7 @@ func _on_start_level(level_id: String) -> void:
 
 func _on_back() -> void:
     get_tree().change_scene_to_file("res://scenes/main/MainMenu.tscn")
+
+func _on_endless() -> void:
+    GameState.set_level("endless")
+    get_tree().change_scene_to_file("res://scenes/main/Game.tscn")

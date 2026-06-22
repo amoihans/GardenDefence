@@ -83,6 +83,12 @@ func _refresh_wave(cur: int, total: int) -> void:
 			wave_label.text = "%s" % _level_name
 		else:
 			wave_label.text = "准备中"
+	elif total < 0:
+		# 无尽模式：total = -1 表示无限
+		if _level_name != "":
+			wave_label.text = "%s  ·  波 %d / ∞" % [_level_name, cur]
+		else:
+			wave_label.text = "波 %d / ∞" % cur
 	else:
 		if _level_name != "":
 			wave_label.text = "%s  ·  波 %d / %d" % [_level_name, cur, total]

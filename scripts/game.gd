@@ -175,7 +175,10 @@ func _on_game_lost() -> void:
 
 func _show_endgame(won: bool, is_new_record: bool = false, elapsed: float = 0.0) -> void:
 	var panel := GameOverPanelScene.instantiate()
-	panel.setup(won, is_new_record, elapsed)
+	var endless_waves: int = 0
+	if GameState.current_level_id == "endless":
+		endless_waves = wave_manager.last_wave
+	panel.setup(won, is_new_record, elapsed, endless_waves)
 	add_child(panel)
 
 # ---------- 关卡 ----------

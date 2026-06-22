@@ -1,13 +1,16 @@
 # scripts/wave_manager.gd
 # ----------------------------------------------------------------------
-# 波次管理器：按 GameState.current_level_id 对应关卡的 waves 顺序刷僵尸
+# 波次管理器
 #
-# 流程：
-#   - start(level_id) → 用指定关卡；若为空就 fallback 到 GameState.current_level_id
-#   - 等 first_wave_delay 秒 → 第 1 波
-#   - 每波内：按 interval 间隔刷僵尸
-#   - 一波刷完 + 等 rest 秒 → 下一波
-#   - 最后一波刷完 → 监听场上僵尸数量，全部清理后宣布胜利
+# 两种模式：
+#   - 关卡模式：按 PlantDB.LEVELS[id].waves 顺序刷僵尸（固定波数 → 胜利）
+#   - 无尽模式：level_id == "endless"，无限刷 + 难度递增（玩家输 → 结束）
+#
+# 难度递增规则（每 5 波一轮）：
+#   - interval *= 0.85 （min 0.6）
+#   - 每波僵尸数 +2 （max 14）
+#   - 每升 1 波，僵尸 HP ×1.04、speed ×1.02（小步长累积）
+#   - 僵尸池随波次扩充（basic → conehead → buckethead → ... → gargantuar）
 # ----------------------------------------------------------------------
 extends Node
 class_name WaveManager
@@ -21,15 +24,24 @@ signal level_loaded(level_data: Dictionary)
 var _running: bool = false
 var _all_spawned: bool = false
 var _level_data: Dictionary = {}
+var _is_endless: bool = false
+var last_wave: int = 0                       # 玩家死时停在第几波（给 GameOverPanel 用）
 
 func start(level_id: String = "") -> void:
 	if _running: return
 	_running = true
 	_all_spawned = false
-	# 解析关卡
 	var target_id := level_id
 	if target_id == "":
 		target_id = GameState.current_level_id
+	# 无尽模式不查 LEVELS —— 自己生成模板
+	if target_id == "endless":
+		_is_endless = true
+		_level_data = _make_endless_template()
+		level_loaded.emit(_level_data)
+		_run_endless()
+		return
+	_is_endless = false
 	var idx := PlantDB.find_level_index(target_id)
 	if idx < 0:
 		push_warning("未找到关卡 id: %s, 用第一个关卡替代" % target_id)
@@ -38,10 +50,10 @@ func start(level_id: String = "") -> void:
 	level_loaded.emit(_level_data)
 	_run_all_waves()
 
+# ---------- 关卡模式（原有逻辑） ----------
 func _run_all_waves() -> void:
 	var waves: Array = _level_data.waves
 	var total: int = waves.size()
-	# 给玩家一点准备时间
 	# 注意：必须显式传 process_always=false —— Godot 4 默认是 true，会在暂停时继续刷僵尸
 	await get_tree().create_timer(first_wave_delay, false).timeout
 
@@ -60,14 +72,70 @@ func _run_all_waves() -> void:
 			await get_tree().create_timer(wave.rest, false).timeout
 
 	_all_spawned = true
-	# 等场上僵尸全部死光
 	while not GameState.is_game_over:
 		await get_tree().create_timer(0.5, false).timeout
 		if get_tree().get_nodes_in_group("zombies").is_empty():
 			GameState.declare_win()
 			return
 
-func _spawn_zombie(zombie_id: String) -> void:
+# ---------- 无尽模式 ----------
+func _make_endless_template() -> Dictionary:
+	# 仅供 level_loaded 信号使用；Hud 显示 "无尽模式"
+	return {
+		"id": "endless",
+		"name": "∞ 无尽模式",
+		"description": "无限波。速度/血量/密度随波次递增。死了算结束。",
+		"environment": "day",
+		"no_sky_sun": false,
+		"start_sun": 100,
+		"sky_tint": Color(0.40, 0.60, 0.85, 1),
+		"waves": [],
+	}
+
+func _run_endless() -> void:
+	await get_tree().create_timer(first_wave_delay, false).timeout
+	var wave_index: int = 0
+	while not GameState.is_game_over:
+		wave_index += 1
+		last_wave = wave_index
+		# 无尽模式：传 -1 表示"总波数无限"
+		GameState.advance_wave(-1)
+		big_wave_started.emit(wave_index)
+		# 难度系数
+		var interval: float = max(0.6, 5.0 * pow(0.85, float(wave_index - 1) / 5.0))
+		var hp_mult: float = pow(1.04, float(wave_index - 1))
+		var speed_mult: float = pow(1.02, float(wave_index - 1))
+		# 当前可用的僵尸池
+		var pool: Array = _zombie_pool_for_wave(wave_index)
+		# 这一波生成多少只
+		var count: int = min(3 + wave_index, 14)
+		for i in count:
+			if GameState.is_game_over: return
+			var zid: String = pool[randi() % pool.size()]
+			_spawn_zombie(zid, hp_mult, speed_mult)
+			await get_tree().create_timer(interval, false).timeout
+		# 波间休息
+		var rest: float = max(2.0, 8.0 - wave_index * 0.1)
+		await get_tree().create_timer(rest, false).timeout
+
+# 僵尸池随波次扩充
+func _zombie_pool_for_wave(w: int) -> Array:
+	var pool: Array = ["basic"]
+	if w >= 3:  pool.append("conehead")
+	if w >= 5:  pool.append("buckethead")
+	if w >= 8:  pool.append("flag")
+	if w >= 10: pool.append("football")
+	if w >= 12: pool.append("newspaper")
+	if w >= 15: pool.append("pole_vaulter")
+	if w >= 18: pool.append("imp")
+	if w >= 20: pool.append("balloon")
+	if w >= 22: pool.append("dancer")
+	if w >= 25: pool.append("miner")
+	if w >= 30: pool.append("gargantuar")
+	return pool
+
+# ---------- 通用 ----------
+func _spawn_zombie(zombie_id: String, hp_mult: float = 1.0, speed_mult: float = 1.0) -> void:
 	if not PlantDB.ZOMBIES.has(zombie_id):
 		push_error("未知僵尸 id: %s" % zombie_id)
 		return
@@ -76,12 +144,18 @@ func _spawn_zombie(zombie_id: String) -> void:
 	var z: Zombie = scene.instantiate()
 	z.row = randi() % PlantDB.GRID_ROWS
 	z.global_position = Vector2(spawn_x, PlantDB.row_to_y(z.row))
+	# 无尽模式：叠加 HP / 速度系数
+	if hp_mult != 1.0:
+		z.max_hp *= hp_mult
+		z.current_hp = z.max_hp
+	if speed_mult != 1.0:
+		z.base_speed *= speed_mult
+		z.current_speed = z.base_speed
 	var game := get_tree().get_first_node_in_group("game_root")
 	if game:
 		game.add_child(z)
 	else:
 		get_parent().add_child(z)
-	# 成就系统 + 图鉴
 	z.died.connect(_on_zombie_died)
 	CodeBookDB.on_zombie_spawned(zombie_id)
 
