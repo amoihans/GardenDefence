@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/zombie.gd" id="1_gz"]
+[ext_resource type="Texture2D" path="res://assets/zombies/gargantuar_zombie.svg" id="2_gz"]
+
+[node name="GargantuarZombie" type="Node2D"]
+script = ExtResource("1_gz")
+max_hp = 3000.0
+base_speed = 6.0
+damage_per_sec = 60.0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("2_gz")

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 100" width="80" height="100">
+  <!-- 茎 -->
+  <rect x="35" y="55" width="10" height="35" fill="#9C27B0" rx="2"/>
+  <!-- 菌盖（紫色忧郁菇） -->
+  <ellipse cx="40" cy="40" rx="32" ry="28" fill="#7B1FA2"/>
+  <!-- 菌盖暗部 -->
+  <ellipse cx="40" cy="48" rx="32" ry="20" fill="#4A148C"/>
+  <!-- 菌盖高光 -->
+  <ellipse cx="30" cy="28" rx="8" ry="4" fill="#CE93D8" opacity="0.7"/>
+  <!-- 眼睛（忧郁下垂） -->
+  <ellipse cx="32" cy="42" rx="5" ry="6" fill="white"/>
+  <ellipse cx="48" cy="42" rx="5" ry="6" fill="white"/>
+  <circle cx="32" cy="44" r="2.5" fill="#1A237E"/>
+  <circle cx="48" cy="44" r="2.5" fill="#1A237E"/>
+  <!-- 嘴巴（弯月） -->
+  <path d="M 32 56 Q 40 50 48 56" stroke="#1A237E" stroke-width="2" fill="none"/>
+  <!-- 烟雾气泡（表示范围喷气） -->
+  <circle cx="12" cy="50" r="4" fill="#E1BEE7" opacity="0.6"/>
+  <circle cx="68" cy="50" r="4" fill="#E1BEE7" opacity="0.6"/>
+  <circle cx="6" cy="60" r="3" fill="#F3E5F5" opacity="0.5"/>
+  <circle cx="74" cy="60" r="3" fill="#F3E5F5" opacity="0.5"/>
+</svg>

@@ -11,6 +11,7 @@ const SPEED := 360.0
 
 var row: int = -1
 var damage: float = 20.0
+var is_fireball: bool = false              # 被火炬 buff 过；可命中飞行单位
 
 func setup(row_index: int, dmg: float) -> void:
     row = row_index
@@ -30,6 +31,9 @@ func _process(delta: float) -> void:
         var z := node as Zombie
         if z == null: continue
         if z.row != row: continue
+        # 飞行单位：普通豌豆打不到（除非被火炬 buff 改成火球——这逻辑在 torchwood 里覆盖）
+        if "flying" in z and z.flying and not is_fireball:
+            continue
         if abs(z.global_position.x - global_position.x) < 32 \
                 and abs(z.global_position.y - global_position.y) < 32:
             z.take_damage(damage)

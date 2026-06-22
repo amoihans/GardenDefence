@@ -35,6 +35,8 @@ var slow_timer: float = 0.0
 var current_hp: float = 100.0
 var row: int = 0
 var _attacking_target: Node = null
+# 飞行：普通豌豆打不到（豌豆按 row 命中）。磁力菇 / 忧郁菇 / 火炬 buff 后能打
+var flying: bool = false
 
 @onready var sprite: Sprite2D = $Sprite2D
 
