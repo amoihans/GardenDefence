@@ -1,0 +1,55 @@
+# scripts/bowling_nut.gd
+# ----------------------------------------------------------------------
+# 坚果保龄：横向滚动的坚果
+#   - 玩家按 Space 发射一个坚果，沿正右方向高速滚动
+#   - 撞到同行僵尸：扣血 + 把僵尸往右推
+#   - 出屏幕 → 自毁
+#   - 用纯 Node2D + ColorRect 画一个棕色球（避免 .svg 导入）
+# ----------------------------------------------------------------------
+extends Node2D
+
+const SPEED: float = 700.0
+const HIT_DAMAGE: float = 800.0
+const KNOCKBACK: float = 80.0
+
+var row: int = 0
+var _consumed: bool = false
+var _body: ColorRect
+
+func _ready() -> void:
+    _body = ColorRect.new()
+    _body.color = Color(0.65, 0.45, 0.25)
+    _body.size = Vector2(40, 40)
+    _body.position = Vector2(-20, -20)
+    add_child(_body)
+    # 旋转动画模拟"滚动"
+    var t := create_tween().set_loops()
+    t.tween_property(_body, "rotation", TAU, 0.2)
+
+func _physics_process(_delta: float) -> void:
+    if _consumed:
+        return
+    position.x += SPEED * _delta
+    # 出屏幕
+    if position.x > PlantDB.SCREEN_W + 64:
+        queue_free()
+        return
+    # 撞僵尸
+    for node in get_tree().get_nodes_in_group("zombies"):
+        var z = node as Node
+        if z == null: continue
+        if "row" in z and z.row != row: continue
+        if abs(z.global_position.x - global_position.x) < 48 \
+                and abs(z.global_position.y - global_position.y) < 48:
+            _hit_zombie(z)
+            return
+
+func _hit_zombie(z: Node) -> void:
+    if _consumed: return
+    _consumed = true
+    if z.has_method("take_damage"):
+        z.take_damage(HIT_DAMAGE)
+    if "global_position" in z:
+        z.global_position.x += KNOCKBACK
+    Sfx.play_shoot()
+    queue_free()
