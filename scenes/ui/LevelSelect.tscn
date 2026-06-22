@@ -48,6 +48,13 @@ theme_override_font_sizes/font_size = 18
 theme_override_colors/font_color = Color(1, 0.7, 0.3, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_ls")
 
+[node name="BowlingBtn" type="Button" parent="TopBar"]
+custom_minimum_size = Vector2(180, 50)
+text = "🎳 坚果保龄"
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.7, 0.95, 0.4, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_ls")
+
 [node name="Title" type="Label" parent="TopBar"]
 size_flags_horizontal = 3
 mouse_filter = 2

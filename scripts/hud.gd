@@ -38,6 +38,10 @@ func _ready() -> void:
 # 由 Game 在 WaveManager.level_loaded 时调用，更新左上角关卡名
 func set_level_name(name: String) -> void:
 	_level_name = name
+
+# 直接覆盖顶部 wave_label（绕过 _refresh_wave 的缓存）
+func set_wave_text(text: String) -> void:
+	wave_label.text = text
 	_refresh_wave(GameState.current_wave, GameState.total_waves)
 
 # 根据 PlantDB.HUD_PLANT_ORDER 实例化所有卡片 ------------------------

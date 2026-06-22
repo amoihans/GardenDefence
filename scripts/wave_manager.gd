@@ -41,6 +41,13 @@ func start(level_id: String = "") -> void:
 		level_loaded.emit(_level_data)
 		_run_endless()
 		return
+	# 坚果保龄
+	if target_id == "bowling":
+		_is_endless = false
+		_level_data = _make_bowling_template()
+		level_loaded.emit(_level_data)
+		_run_bowling()
+		return
 	_is_endless = false
 	var idx := PlantDB.find_level_index(target_id)
 	if idx < 0:
@@ -161,3 +168,79 @@ func _spawn_zombie(zombie_id: String, hp_mult: float = 1.0, speed_mult: float = 
 
 func _on_zombie_died(_z: Zombie) -> void:
 	AchievementDB.on_zombie_killed()
+
+# ---------- 坚果保龄模式 ----------
+const BOWLING_NUT_SCENE := preload("res://scenes/pickups/BowlingNut.tscn")
+const BOWLING_TOTAL: int = 3
+const BOWLING_ZOMBIE_ROWS: Array = [0, 1, 2, 3, 4]
+const BOWLING_ZOMBIE_TYPES: Array = ["basic", "conehead", "basic", "buckethead", "basic"]
+
+# 暴露给 game.gd 读：剩余坚果数
+var nuts_remaining: int = BOWLING_TOTAL
+var nuts_used: int = 0
+
+func _make_bowling_template() -> Dictionary:
+	return {
+		"id": "bowling",
+		"name": "🎳 坚果保龄",
+		"description": "3 颗坚果，发射撞飞僵尸。Space 发射。",
+		"environment": "day",
+		"no_sky_sun": true,
+		"start_sun": 0,
+		"sky_tint": Color(0.40, 0.60, 0.85, 1),
+		"waves": [],
+	}
+
+func _run_bowling() -> void:
+	nuts_remaining = BOWLING_TOTAL
+	nuts_used = 0
+	GameState.advance_wave(1)
+	big_wave_started.emit(1)
+	# 暂停天降阳光 + 不开向日葵
+	# 一次性刷一排僵尸
+	for i in BOWLING_ZOMBIE_TYPES.size():
+		var zid: String = BOWLING_ZOMBIE_TYPES[i]
+		var r: int = BOWLING_ZOMBIE_ROWS[i]
+		_spawn_zombie_at(zid, r, 1100.0)
+	# 等坚果发射 / 等玩家输
+	# 输：坚果用完 + 场上还有僵尸
+	while not GameState.is_game_over:
+		await get_tree().create_timer(0.5, false).timeout
+		if get_tree().get_nodes_in_group("zombies").is_empty():
+			GameState.declare_win()
+			return
+
+func _spawn_zombie_at(zombie_id: String, row: int, x: float) -> void:
+	if not PlantDB.ZOMBIES.has(zombie_id):
+		return
+	var data: Dictionary = PlantDB.ZOMBIES[zombie_id]
+	var scene: PackedScene = load(data.scene_path)
+	var z: Zombie = scene.instantiate()
+	z.row = row
+	z.global_position = Vector2(x, PlantDB.row_to_y(row))
+	var game := get_tree().get_first_node_in_group("game_root")
+	if game:
+		game.add_child(z)
+	else:
+		get_parent().add_child(z)
+	z.died.connect(_on_zombie_died)
+	CodeBookDB.on_zombie_spawned(zombie_id)
+
+# game.gd 调用：玩家按 Space
+func fire_bowling_nut(row: int) -> bool:
+	if nuts_remaining <= 0:
+		return false
+	if GameState.is_game_over:
+		return false
+	nuts_remaining -= 1
+	nuts_used += 1
+	var nut = BOWLING_NUT_SCENE.instantiate()
+	nut.row = row
+	nut.global_position = Vector2(PlantDB.LAWN_ORIGIN_X - 30, PlantDB.row_to_y(row))
+	var game := get_tree().get_first_node_in_group("game_root")
+	if game:
+		game.add_child(nut)
+	else:
+		get_parent().add_child(nut)
+	Sfx.play_shoot()
+	return true
