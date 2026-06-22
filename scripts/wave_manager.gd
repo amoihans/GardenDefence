@@ -178,6 +178,7 @@ const BOWLING_ZOMBIE_TYPES: Array = ["basic", "conehead", "basic", "buckethead",
 # 暴露给 game.gd 读：剩余坚果数
 var nuts_remaining: int = BOWLING_TOTAL
 var nuts_used: int = 0
+var _ready_nuts: Array = []                    # 场景里的待命坚果实例
 
 func _make_bowling_template() -> Dictionary:
 	return {
@@ -194,16 +195,26 @@ func _make_bowling_template() -> Dictionary:
 func _run_bowling() -> void:
 	nuts_remaining = BOWLING_TOTAL
 	nuts_used = 0
+	_ready_nuts.clear()
 	GameState.advance_wave(1)
 	big_wave_started.emit(1)
-	# 暂停天降阳光 + 不开向日葵
 	# 一次性刷一排僵尸
 	for i in BOWLING_ZOMBIE_TYPES.size():
 		var zid: String = BOWLING_ZOMBIE_TYPES[i]
 		var r: int = BOWLING_ZOMBIE_ROWS[i]
 		_spawn_zombie_at(zid, r, 1100.0)
+	# 在 col=0 附近放 3 颗待命坚果（视觉上看到有 3 颗）
+	for i in BOWLING_TOTAL:
+		var nut = BOWLING_NUT_SCENE.instantiate()
+		nut.row = 2                                  # 都在中间行
+		nut.global_position = Vector2(PlantDB.LAWN_ORIGIN_X - 30 + i * 25, PlantDB.row_to_y(2))
+		var game := get_tree().get_first_node_in_group("game_root")
+		if game:
+			game.add_child(nut)
+		else:
+			get_parent().add_child(nut)
+		_ready_nuts.append(nut)
 	# 等坚果发射 / 等玩家输
-	# 输：坚果用完 + 场上还有僵尸
 	while not GameState.is_game_over:
 		await get_tree().create_timer(0.5, false).timeout
 		if get_tree().get_nodes_in_group("zombies").is_empty():
@@ -226,21 +237,32 @@ func _spawn_zombie_at(zombie_id: String, row: int, x: float) -> void:
 	z.died.connect(_on_zombie_died)
 	CodeBookDB.on_zombie_spawned(zombie_id)
 
-# game.gd 调用：玩家按 Space
+# game.gd 调用：玩家按 Space —— 发射 x 最大的待命坚果 + 奖励 25 阳光
 func fire_bowling_nut(row: int) -> bool:
 	if nuts_remaining <= 0:
 		return false
 	if GameState.is_game_over:
 		return false
+	# 找 x 最大的待命坚果（最右那颗）
+	var target: Node = null
+	var best_x: float = -INF
+	for nut in _ready_nuts:
+		if nut == null or not is_instance_valid(nut): continue
+		if not nut.is_ready: continue
+		if nut.global_position.x > best_x:
+			best_x = nut.global_position.x
+			target = nut
+	if target == null:
+		return false
+	target.row = row                                    # 玩家选了哪行
+	# y 跳到目标行
+	var target_y: float = PlantDB.row_to_y(row)
+	var tween := create_tween()
+	tween.tween_property(target, "position:y", target_y, 0.15)
+	tween.tween_callback(target.fire)
 	nuts_remaining -= 1
 	nuts_used += 1
-	var nut = BOWLING_NUT_SCENE.instantiate()
-	nut.row = row
-	nut.global_position = Vector2(PlantDB.LAWN_ORIGIN_X - 30, PlantDB.row_to_y(row))
-	var game := get_tree().get_first_node_in_group("game_root")
-	if game:
-		game.add_child(nut)
-	else:
-		get_parent().add_child(nut)
+	# 奖励阳光：每发一颗 +25
+	GameState.sun_amount += 25
 	Sfx.play_shoot()
 	return true
