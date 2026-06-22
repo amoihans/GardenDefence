@@ -9,7 +9,7 @@ extends Control
 
 const LEVEL_CARD_SCENE := preload("res://scenes/ui/LevelCard.tscn")
 
-@onready var level_list: VBoxContainer = $Center/List
+@onready var level_list: VBoxContainer = $Scroll/Spacer/List
 @onready var back_btn: Button = $TopBar/BackBtn
 @onready var title: Label = $TopBar/Title
 

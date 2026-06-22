@@ -9,13 +9,13 @@
 extends Plant
 
 func _on_ready_setup() -> void:
-    pass
+	pass
 
 func take_damage(amount: float) -> void:
-    super.take_damage(amount)
-    if sprite == null:
-        return
-    var ratio: float = float(current_hp) / float(max_hp)
-    # 越破越暗
-    var d = lerp(1.0, 0.55, 1.0 - clampf(ratio, 0.0, 1.0))
-    sprite.modulate = Color(d, d, d)
+	super.take_damage(amount)
+	if sprite == null:
+		return
+	var ratio: float = float(current_hp) / float(max_hp)
+	# 越破越暗
+	var d = lerp(1.0, 0.55, 1.0 - clampf(ratio, 0.0, 1.0))
+	sprite.modulate = Color(d, d, d)

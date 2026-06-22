@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 100" width="80" height="100">
+  <!-- 茎（紫色，吸光植物） -->
+  <rect x="35" y="55" width="10" height="35" fill="#7B1FA2" rx="2"/>
+  <!-- 中心球（深紫，吸光核心） -->
+  <circle cx="40" cy="40" r="20" fill="#4A148C"/>
+  <!-- 内部旋转光芒（暗示吸引） -->
+  <circle cx="40" cy="40" r="12" fill="#6A1B9A"/>
+  <circle cx="40" cy="40" r="6" fill="#E1BEE7"/>
+  <!-- 高光 -->
+  <circle cx="34" cy="34" r="3" fill="white" opacity="0.7"/>
+  <!-- 周围 4 颗被吸引的小阳光（暗示正在收集） -->
+  <circle cx="14" cy="30" r="4" fill="#FFD600" stroke="#FFA000" stroke-width="0.5"/>
+  <circle cx="66" cy="30" r="4" fill="#FFD600" stroke="#FFA000" stroke-width="0.5"/>
+  <circle cx="18" cy="58" r="3" fill="#FFD600" stroke="#FFA000" stroke-width="0.5"/>
+  <circle cx="62" cy="58" r="3" fill="#FFD600" stroke="#FFA000" stroke-width="0.5"/>
+  <!-- 吸引线（虚线箭头指向中心） -->
+  <line x1="18" y1="32" x2="30" y2="38" stroke="#E1BEE7" stroke-width="0.8" opacity="0.5" stroke-dasharray="2,1"/>
+  <line x1="62" y1="32" x2="50" y2="38" stroke="#E1BEE7" stroke-width="0.8" opacity="0.5" stroke-dasharray="2,1"/>
+  <line x1="22" y1="58" x2="32" y2="48" stroke="#E1BEE7" stroke-width="0.8" opacity="0.5" stroke-dasharray="2,1"/>
+  <line x1="58" y1="58" x2="48" y2="48" stroke="#E1BEE7" stroke-width="0.8" opacity="0.5" stroke-dasharray="2,1"/>
+</svg>

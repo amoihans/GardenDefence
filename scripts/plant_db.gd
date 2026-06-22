@@ -138,13 +138,22 @@ const PLANTS: Dictionary = {
         "scene_path": "res://scenes/plants/MagnetShroom.tscn",
         "icon_path": "res://assets/plants/magnet_shroom.svg",
     },
+    "sun_sucker": {
+        "display_name": "吸阳菇",
+        "cost": 50,
+        "max_hp": 60,
+        "cooldown": 15.0,
+        "description": "每 1.5 秒自动收集场上最近的阳光（sun._collect() 入账）。减少手动点击负担。",
+        "scene_path": "res://scenes/plants/SunSucker.tscn",
+        "icon_path": "res://assets/plants/sun_sucker.svg",
+    },
 }
 
 # HUD 上从左到右展示的植物 ID 顺序
 const HUD_PLANT_ORDER: Array[String] = [
     "sunflower", "peashooter", "wallnut", "cherrybomb", "repeater",
     "freezer", "threepeater", "potato_mine", "sun_shroom", "jalapeno",
-    "torchwood", "fume_shroom", "magnet_shroom",
+    "torchwood", "fume_shroom", "magnet_shroom", "sun_sucker",
 ]
 
 # 僵尸数据 ------------------------------------------------------------
