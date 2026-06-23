@@ -169,57 +169,102 @@ func _spawn_zombie(zombie_id: String, hp_mult: float = 1.0, speed_mult: float = 
 func _on_zombie_died(_z: Zombie) -> void:
 	AchievementDB.on_zombie_killed()
 
-# ---------- 坚果保龄模式 ----------
+# ---------- 坚果保龄模式（弹珠台新版） ----------
 const BOWLING_NUT_SCENE := preload("res://scenes/pickups/BowlingNut.tscn")
-const BOWLING_TOTAL: int = 3
 const BOWLING_ZOMBIE_ROWS: Array = [0, 1, 2, 3, 4]
 const BOWLING_ZOMBIE_TYPES: Array = ["basic", "conehead", "basic", "buckethead", "basic"]
 
-# 暴露给 game.gd 读：剩余坚果数
-var nuts_remaining: int = BOWLING_TOTAL
-var nuts_used: int = 0
-var _ready_nuts: Array = []                    # 场景里的待命坚果实例
+# 所有待发弹跳的坚果（可能是多个）
+var _bowling_ready_nuts: Array = []
+
+# bowling nut 发弹信号：nut 自己发，wave_manager 收
+signal _bowling_nut_ready(nut)
+
+# 发射区矩形：col=0 整列（用于弹跳边界）
+var _lawn_rect: Rect2 = Rect2(Vector2.ZERO, Vector2.ZERO)
 
 func _make_bowling_template() -> Dictionary:
 	return {
 		"id": "bowling",
 		"name": "🎳 坚果保龄",
-		"description": "3 颗坚果，发射撞飞僵尸。Space 发射。",
+		"description": "75阳光可买坚果，Space/点击发射，在草坪弹弹弹撞僵尸！",
 		"environment": "day",
 		"no_sky_sun": true,
-		"start_sun": 0,
+		"start_sun": 75,
 		"sky_tint": Color(0.40, 0.60, 0.85, 1),
 		"waves": [],
 	}
 
 func _run_bowling() -> void:
-	nuts_remaining = BOWLING_TOTAL
-	nuts_used = 0
-	_ready_nuts.clear()
+	_bowling_ready_nuts.clear()
+	# 计算弹跳边界：整片草坪（9列 × 5行）
+	_lawn_rect = Rect2(
+		PlantDB.LAWN_ORIGIN_X,
+		PlantDB.LAWN_ORIGIN_Y,
+		PlantDB.CELL_SIZE * PlantDB.GRID_COLS,
+		PlantDB.CELL_SIZE * PlantDB.GRID_ROWS)
 	GameState.advance_wave(1)
 	big_wave_started.emit(1)
-	# 一次性刷一排僵尸
+	# 立即刷一排僵尸
 	for i in BOWLING_ZOMBIE_TYPES.size():
 		var zid: String = BOWLING_ZOMBIE_TYPES[i]
 		var r: int = BOWLING_ZOMBIE_ROWS[i]
 		_spawn_zombie_at(zid, r, 1100.0)
-	# 在 col=0 附近放 3 颗待命坚果（视觉上看到有 3 颗）
-	for i in BOWLING_TOTAL:
-		var nut = BOWLING_NUT_SCENE.instantiate()
-		nut.row = 2                                  # 都在中间行
-		nut.global_position = Vector2(PlantDB.LAWN_ORIGIN_X - 30 + i * 25, PlantDB.row_to_y(2))
-		var game := get_tree().get_first_node_in_group("game_root")
-		if game:
-			game.add_child(nut)
-		else:
-			get_parent().add_child(nut)
-		_ready_nuts.append(nut)
-	# 等坚果发射 / 等玩家输
+	# 监听新坚果被放到发射区
+	_bowling_nut_ready.connect(_on_bowling_nut_ready)
+	# 等待所有僵尸被消灭
 	while not GameState.is_game_over:
 		await get_tree().create_timer(0.5, false).timeout
 		if get_tree().get_nodes_in_group("zombies").is_empty():
 			GameState.declare_win()
 			return
+	# 清理
+	if _bowling_nut_ready.is_connected(_on_bowling_nut_ready):
+		_bowling_nut_ready.disconnect(_on_bowling_nut_ready)
+
+# 玩家在 col=0 放下 wallnut → 变成待发弹跳坚果
+func _on_bowling_nut_ready(nut: Node) -> void:
+	print("[Bowling] nut registered, total: ", _bowling_ready_nuts.size() + 1)
+	_bowling_ready_nuts.append(nut)
+
+# game.gd 调用：Space 键 → 所有待发坚果发射
+func launch_all_bowling_nuts() -> void:
+	print("[Bowling] launch_all called, nuts count: ", _bowling_ready_nuts.size())
+	for nut in _bowling_ready_nuts:
+		if nut == null or not is_instance_valid(nut): continue
+		# 只发射 READY 状态的坚果（已经在飞的就跳过）
+		if nut.has_method("launch"):
+			print("[Bowling] calling launch on nut")
+			nut.launch()
+	# 清除已发射列表（nut 自己管自己飞了）
+	_bowling_ready_nuts.clear()
+
+# game.gd 调用：点击草坪 → 如果点的是发射格，所有待发坚果发射
+# 返回是否处理了点击
+func try_launch_on_click(click_col: int, click_global_pos: Vector2) -> bool:
+	if _bowling_ready_nuts.is_empty(): return false
+	if click_col == 0:
+		for nut in _bowling_ready_nuts:
+			if nut == null or not is_instance_valid(nut): continue
+			if nut.has_method("try_launch_from_click"):
+				nut.try_launch_from_click(click_global_pos)
+		return true
+	return false
+
+# game.gd 调用：检测某 wallnut 是否在 col=0，是则注册为待发坚果
+func register_wallnut_as_bowling(wallnut: Node, col: int, row: int) -> void:
+	if GameState.current_level_id != "bowling": return
+	if col != 0: return
+	# 销毁墙坚果 plant，用弹跳坚果替代
+	wallnut.queue_free()
+	var nut = BOWLING_NUT_SCENE.instantiate()
+	nut.configure(_lawn_rect, col, row)
+	var game := get_tree().get_first_node_in_group("game_root")
+	if game:
+		game.add_child(nut)
+	else:
+		get_parent().add_child(nut)
+	_bowling_nut_ready.emit(nut)
 
 func _spawn_zombie_at(zombie_id: String, row: int, x: float) -> void:
 	if not PlantDB.ZOMBIES.has(zombie_id):
@@ -236,33 +281,3 @@ func _spawn_zombie_at(zombie_id: String, row: int, x: float) -> void:
 		get_parent().add_child(z)
 	z.died.connect(_on_zombie_died)
 	CodeBookDB.on_zombie_spawned(zombie_id)
-
-# game.gd 调用：玩家按 Space —— 发射 x 最大的待命坚果 + 奖励 25 阳光
-func fire_bowling_nut(row: int) -> bool:
-	if nuts_remaining <= 0:
-		return false
-	if GameState.is_game_over:
-		return false
-	# 找 x 最大的待命坚果（最右那颗）
-	var target: Node = null
-	var best_x: float = -INF
-	for nut in _ready_nuts:
-		if nut == null or not is_instance_valid(nut): continue
-		if not nut.is_ready: continue
-		if nut.global_position.x > best_x:
-			best_x = nut.global_position.x
-			target = nut
-	if target == null:
-		return false
-	target.row = row                                    # 玩家选了哪行
-	# y 跳到目标行
-	var target_y: float = PlantDB.row_to_y(row)
-	var tween := create_tween()
-	tween.tween_property(target, "position:y", target_y, 0.15)
-	tween.tween_callback(target.fire)
-	nuts_remaining -= 1
-	nuts_used += 1
-	# 奖励阳光：每发一颗 +25
-	GameState.sun_amount += 25
-	Sfx.play_shoot()
-	return true

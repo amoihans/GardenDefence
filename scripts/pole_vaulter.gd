@@ -46,8 +46,8 @@ func _physics_process(delta: float) -> void:
 func _start_jump(plant: Plant) -> void:
     _jumping = true
     _jump_target = plant
-    # 跳过的目标 = 该植物的右侧一格（如果存在）；不存在就退回到植物左侧
-    var target_x: float = global_position.x + 96.0
+    # 跳过的目标 = 该植物的左侧一格（靠近家的方向）
+    var target_x: float = global_position.x - 96.0
     var target_y: float = global_position.y
     # 视觉曲线：先向上再向下
     var start_pos := global_position

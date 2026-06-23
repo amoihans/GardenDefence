@@ -41,9 +41,9 @@ stretch_mode = 5
 
 [node name="CostLabel" type="Label" parent="."]
 offset_left = 0.0
-offset_top = 70.0
+offset_top = 62.0
 offset_right = 80.0
-offset_bottom = 92.0
+offset_bottom = 84.0
 mouse_filter = 2
 text = "50"
 horizontal_alignment = 1

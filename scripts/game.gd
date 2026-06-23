@@ -44,9 +44,6 @@ func _ready() -> void:
 	wave_manager.level_loaded.connect(_on_level_loaded)
 	wave_manager.start()           # 不传 level_id → 读 GameState.current_level_id
 	_shake_orig_pos = camera.position
-	# 坚果保龄：监听坚果用完
-	if GameState.current_level_id == "bowling":
-		_bowling_hud_timer()
 
 # 屏幕震动
 func _process(delta: float) -> void:
@@ -65,18 +62,29 @@ func _process(delta: float) -> void:
 #   duration: 持续秒数
 func shake(intensity: float = 12.0, duration: float = 0.25) -> void:
 	_shake_intensity = intensity
-	# 取较大的：允许重置
 	_shake_remaining = max(_shake_remaining, duration)
 
 func _unhandled_input(event: InputEvent) -> void:
-	# 坚果保龄模式：Space 发射，1~5 选 row
+	# 坚果保龄模式
 	if GameState.current_level_id == "bowling":
 		if event.is_action_pressed("pause"):
 			_toggle_pause()
 			return
+		# Space → 所有待发坚果发射
 		if event is InputEventKey and event.pressed and event.keycode == KEY_SPACE:
-			_fire_bowling()
-		return                                  # bowling 模式下忽略其他输入
+			print("[Game] SPACE pressed, calling launch_all_bowling_nuts")
+			wave_manager.launch_all_bowling_nuts()
+			return
+		# 点击草坪
+		if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+			var click_pos := get_global_mouse_position()
+			var cell := PlantDB.world_to_cell(click_pos)
+			# 坚果保龄点击草坪：如果是发射格( col=0 )则发射
+			if wave_manager.try_launch_on_click(cell.x, click_pos):
+				get_viewport().set_input_as_handled()
+				return
+		return
+
 	# 数字键 1~5 选植物，6 选铲子
 	if event.is_action_pressed("cancel_selection"):
 		GameState.selected_plant_id = ""
@@ -100,26 +108,6 @@ func _use_fertilize() -> void:
 	_last_plant.fertilize()
 	GameState.fertilizer -= 1
 	AchievementDB.on_fertilizer_used()
-
-# 坚果保龄：发射到鼠标所在行（或随机行）
-func _fire_bowling() -> void:
-	var row: int = 2                                      # 默认中间行
-	var mouse := get_global_mouse_position()
-	if mouse.y >= PlantDB.LAWN_ORIGIN_Y and mouse.y <= PlantDB.LAWN_ORIGIN_Y + PlantDB.GRID_ROWS * PlantDB.CELL_SIZE:
-		row = clampi(int((mouse.y - PlantDB.LAWN_ORIGIN_Y) / PlantDB.CELL_SIZE), 0, PlantDB.GRID_ROWS - 1)
-	wave_manager.fire_bowling_nut(row)
-	_refresh_bowling_hud()
-
-# 持续刷新 HUD 显示剩余坚果数（只跑一次循环，await 0.2s）
-func _bowling_hud_timer() -> void:
-	while not GameState.is_game_over:
-		_refresh_bowling_hud()
-		await get_tree().create_timer(0.2, false).timeout
-
-func _refresh_bowling_hud() -> void:
-	if GameState.current_level_id != "bowling":
-		return
-	hud.set_wave_text("🎳 剩余 %d / %d  ·  Space 发射" % [wave_manager.nuts_remaining, wave_manager.BOWLING_TOTAL])
 
 func _try_select_index(i: int) -> void:
 	if i < 0 or i >= PlantDB.HUD_PLANT_ORDER.size(): return
@@ -159,6 +147,8 @@ func _place_plant(col: int, row: int, plant_id: String) -> void:
 	plant.died.connect(_on_last_plant_died.bind(plant))
 	if plant_id == "wallnut":
 		_level_used_wallnut = true
+		# 坚果保龄：放在 col=0 则注册为待发弹跳坚果
+		wave_manager.register_wallnut_as_bowling(plant, col, row)
 	# 成就 + 图鉴
 	AchievementDB.on_plant_planted(plant_id)
 	CodeBookDB.on_plant_planted(plant_id)
@@ -226,6 +216,9 @@ func _on_level_loaded(level_data: Dictionary) -> void:
 	# 开局阳光覆盖
 	if level_data.has("start_sun"):
 		GameState.sun_amount = level_data.start_sun
+	# 坚果保龄 HUD
+	if GameState.current_level_id == "bowling":
+		hud.set_wave_text("🎳 坚果保龄  ·  F/空格 发射坚果")
 	# 成就系统：通知当前关卡
 	AchievementDB.on_level_started(level_data.id)
 	# 计时起点

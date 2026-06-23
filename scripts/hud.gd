@@ -8,11 +8,11 @@ class_name HUD
 const PlantCardScene := preload("res://scenes/ui/PlantCard.tscn")
 
 @onready var sun_label: Label = $Bar/SunCount
-@onready var fertilizer_label: Label = $Bar/FertilizerLabel
+@onready var fertilizer_label: Label = $FertilizerLabel
 @onready var wave_label: Label = $Bar/WaveLabel
 @onready var card_row: HBoxContainer = $Bar/CardRow
 @onready var shovel_button: TextureButton = $Shovel
-@onready var pause_button: Button = $Bar/PauseBtn
+@onready var pause_button: Button = $PauseBtn
 
 signal card_pressed(plant_id: String)
 signal card_drag_placed(col: int, row: int, plant_id: String)
