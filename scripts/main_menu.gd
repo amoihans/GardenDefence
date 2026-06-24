@@ -14,6 +14,7 @@ const SettingsPanelScene := preload("res://scenes/ui/SettingsPanel.tscn")
 @onready var quit_btn: Button = $Center/VBox/QuitBtn
 
 func _ready() -> void:
+    _setup_fonts()                        # emoji 字体 fallback
     Sfx.play_bgm()                    # 进入主菜单自动播放 BGM
     start_btn.pressed.connect(_on_start)
     select_btn.pressed.connect(_on_select)
@@ -21,6 +22,15 @@ func _ready() -> void:
     codebook_btn.pressed.connect(_on_codebook)
     settings_btn.pressed.connect(_on_settings)
     quit_btn.pressed.connect(_on_quit)
+
+# 加载 NotoColorEmoji 作为全局 fallback —— emoji 字符（🎉🏆🌱等）会走它
+# 顺序：默认 CJK 字体优先；emoji 字符集不在 CJK 范围 → fallback 到 Color Emoji
+func _setup_fonts() -> void:
+    var emoji_font := load("res://assets/fonts/NotoColorEmoji.ttf")
+    if emoji_font == null:
+        push_warning("NotoColorEmoji.ttf 未找到，emoji 可能显示失败")
+        return
+    ThemeDB.fallback_font = emoji_font
 
 # 直接开始默认关卡
 func _on_start() -> void:
